@@ -9,7 +9,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <div className="border-4 border-foreground bg-accent p-1 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)]">
             <img
-              src="/images/freaks-only-logo.png"
+              src="/freaks-only-logo.png"
               alt="FREAKS ONLY Logo"
               width={120}
               height={120}

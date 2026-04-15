@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+
 
 export function AlbumPlayer() {
   return (
@@ -8,7 +8,7 @@ export function AlbumPlayer() {
       <div className="flex flex-col items-center gap-4">
         {/* Album Artwork */}
         <div className="border-4 border-foreground bg-background w-full aspect-square relative overflow-hidden">
-          <Image
+          <img
             src="/images/freaks-only-logo.png"
             alt="Now Playing Album Art"
             fill

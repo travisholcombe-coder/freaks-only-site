@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+
 
 export function Header() {
   return (
@@ -8,7 +8,7 @@ export function Header() {
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="border-4 border-foreground bg-accent p-1 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)]">
-            <Image
+            <img
               src="/images/freaks-only-logo.png"
               alt="FREAKS ONLY Logo"
               width={120}

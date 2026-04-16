@@ -1,19 +1,13 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  darkMode: ["class"],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        accent: 'var(--accent)',
-        secondary: 'var(--secondary)',
+        background: "#0d0d0d",
+        foreground: "#ffffff",
+        accent: "#D40000",
+        secondary: "#FF4500",
       },
     },
   },

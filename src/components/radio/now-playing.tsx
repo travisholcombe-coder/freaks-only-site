@@ -1,4 +1,4 @@
-export default function NowPlaying() {
+export function NowPlaying() {
   return (
     <div className="bg-[#FF4500] border-2 border-white p-4 mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="flex flex-col md:flex-row gap-6 items-center">

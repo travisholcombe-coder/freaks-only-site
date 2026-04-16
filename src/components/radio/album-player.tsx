@@ -9,7 +9,7 @@ export function AlbumPlayer() {
         {/* Album Artwork */}
         <div className="border-4 border-foreground bg-background w-full aspect-square relative overflow-hidden">
           <img
-            src="/images/freaks-only-logo.jpg"
+            src="/freaks-only-logo.jpg"
             alt="Now Playing Album Art"
             fill
             className="object-cover"

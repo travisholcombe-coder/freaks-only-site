@@ -1,24 +1,44 @@
 "use client"
 
 export function NowPlaying() {
+  const currentTrack = "WAITING FOR SIGNAL..."
+  const artist = "TUNE IN"
+
   return (
-    <div className="border-2 border-foreground bg-secondary p-4 mb-4 shadow-[4px_4px_0px_0px_rgba(250,250,250,1)]">
-      <div className="flex flex-col w-full">
-        <p className="text-xs font-bold tracking-widest uppercase text-foreground mb-2">Now Playing</p>
-        <div className="overflow-hidden bg-black border border-foreground p-2">
-          <div
-            style={{
-              display: "inline-block",
-              whiteSpace: "nowrap",
-              animation: "marquee-left 25s linear infinite",
-            }}
-          >
-            <span className="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white">
-              TUNE IN — WAITING FOR SIGNAL — TUNE IN — WAITING FOR SIGNAL — TUNE IN — WAITING FOR SIGNAL —&nbsp;
-            </span>
-            <span className="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white">
-              TUNE IN — WAITING FOR SIGNAL — TUNE IN — WAITING FOR SIGNAL — TUNE IN — WAITING FOR SIGNAL —&nbsp;
-            </span>
+    <div className="border-4 border-foreground bg-secondary overflow-hidden">
+      <div className="bg-foreground text-background px-3 py-1 text-xs tracking-widest font-bold">
+        NOW PLAYING
+      </div>
+      {/* Dymo Label Style Ticker */}
+      <div className="relative overflow-hidden py-4 px-2">
+        <div className="flex whitespace-nowrap animate-ticker">
+          <div className="flex items-center gap-8 px-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <span className="text-accent text-2xl md:text-3xl font-bold tracking-tight">
+                  {artist}
+                </span>
+                <span className="text-foreground">—</span>
+                <span className="text-foreground text-2xl md:text-3xl font-bold tracking-tight">
+                  {currentTrack}
+                </span>
+                <span className="text-accent">★</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-8 px-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <span className="text-accent text-2xl md:text-3xl font-bold tracking-tight">
+                  {artist}
+                </span>
+                <span className="text-foreground">—</span>
+                <span className="text-foreground text-2xl md:text-3xl font-bold tracking-tight">
+                  {currentTrack}
+                </span>
+                <span className="text-accent">★</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

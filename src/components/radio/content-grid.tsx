@@ -57,7 +57,18 @@ const schedule = [
   ]},
 ]
 
+const dayKeys = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+
+function getSortedSchedule() {
+  const todayIndex = new Date().getDay() // 0 = SUN, 1 = MON, etc.
+  const todayKey = dayKeys[todayIndex]
+  const startIndex = schedule.findIndex((d) => d.day === todayKey)
+  return [...schedule.slice(startIndex), ...schedule.slice(0, startIndex)]
+}
+
 export function ContentGrid() {
+  const sortedSchedule = getSortedSchedule()
+
   return (
     <div className="flex flex-col gap-4 p-4 pb-24">
       {/* Main Content Row - Player and Schedule Equal Width */}
@@ -72,16 +83,16 @@ export function ContentGrid() {
             <h2 className="text-lg font-bold tracking-wider">TRANSMISSION SCHEDULE</h2>
           </div>
           <div className="flex-1 overflow-y-auto max-h-[400px] space-y-0 text-sm">
-            {schedule.map((daySchedule, dayIndex) => (
-              <div 
+            {sortedSchedule.map((daySchedule, dayIndex) => (
+              <div
                 key={daySchedule.day}
-                className={`${dayIndex !== schedule.length - 1 ? "border-b border-foreground/30" : ""}`}
+                className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
               >
                 <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider">
                   {daySchedule.day}
                 </div>
                 {daySchedule.slots.map((slot, slotIndex) => (
-                  <div 
+                  <div
                     key={`${daySchedule.day}-${slotIndex}`}
                     className={`flex justify-between items-center px-2 py-2 ${
                       slotIndex !== daySchedule.slots.length - 1 ? "border-b border-foreground/10" : ""

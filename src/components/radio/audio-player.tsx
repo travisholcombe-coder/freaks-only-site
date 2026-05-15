@@ -40,7 +40,7 @@ export function AudioPlayer() {
       {/* Live365 stream - replace with actual stream URL */}
       <audio
         ref={audioRef}
-        src="https://stream.live365.com/placeholder"
+        src="https://streaming.live365.com/a77923"
         preload="none"
       />
       

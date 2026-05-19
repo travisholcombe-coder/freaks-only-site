@@ -1,9 +1,18 @@
 "use client"
 
 export function SupportButton() {
+  const handleClick = () => {
+    const donateSection = document.getElementById("donate")
+    if (donateSection) {
+      donateSection.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }
+
   return (
-    <div
-      className="inline-block stamp-effect cursor-not-allowed opacity-90"
+    <button
+      onClick={handleClick}
+      className="inline-block stamp-effect cursor-pointer hover:scale-105 transition-transform"
+      aria-label="Scroll to donation options"
     >
       <div className="relative">
         {/* Outer stamp border */}
@@ -23,12 +32,12 @@ export function SupportButton() {
             </div>
           </div>
         </div>
-        
+
         {/* Stamp texture overlay */}
         <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-multiply">
           <div className="w-full h-full bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,rgba(0,0,0,0.1)_4px)]" />
         </div>
       </div>
-    </div>
+    </button>
   )
 }

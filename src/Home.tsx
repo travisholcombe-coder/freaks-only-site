@@ -6,7 +6,7 @@ import { AudioPlayer } from "@/components/radio/audio-player"
 
 export default function Home() {
   return (
-    <main className="min-h-screen pb-20">
+    <main className="min-h-screen pb-32 md:pb-20">
       {/* Aggressive Header */}
       <Header />
       {/* Thanks Banner (shows after Stripe donation redirect) */}

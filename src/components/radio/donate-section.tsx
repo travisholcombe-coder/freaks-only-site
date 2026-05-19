@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Heart } from "lucide-react"
 
 const DONATION_TIERS = [
@@ -36,26 +37,40 @@ const DONATION_TIERS = [
 ]
 
 export function DonateSection() {
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const handleOpenDonate = () => setOpen(true)
+    window.addEventListener("open-donate", handleOpenDonate)
+    return () => window.removeEventListener("open-donate", handleOpenDonate)
+  }, [])
+
   const handleClick = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer")
   }
 
+  if (!open) return null
+
   return (
     <div
       id="donate"
-      className="border-4 border-foreground bg-secondary p-4 md:p-6 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] scroll-mt-4"
+      className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] scroll-mt-4"
     >
-      <div className="flex items-center gap-2 mb-3">
-        <Heart className="w-5 h-5 text-accent" />
-        <h2 className="text-lg font-bold tracking-wider">SUPPORT FREAKS ONLY FM</h2>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Heart className="w-4 h-4 text-accent" />
+          <h2 className="text-sm font-bold tracking-wider">SUPPORT FREAKS ONLY FM</h2>
+        </div>
+        <button
+          onClick={() => setOpen(false)}
+          className="text-xs text-muted-foreground hover:text-foreground tracking-widest"
+          aria-label="Close donation options"
+        >
+          CLOSE ×
+        </button>
       </div>
 
-      <p className="text-sm text-muted-foreground tracking-wide mb-6 max-w-2xl">
-        FREAKS ONLY FM is a listener-supported online radio station. Your contribution keeps the
-        signal alive — no ads, no corporate underwriting, just freaks playing records for freaks.
-      </p>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
         {DONATION_TIERS.map((tier) => (
           <button
             key={tier.label}
@@ -63,15 +78,15 @@ export function DonateSection() {
             className="group block text-left"
             aria-label={`Donate ${tier.label} ${tier.sublabel}`}
           >
-            <div className="border-4 border-dashed border-accent p-1 transition-transform group-hover:scale-105">
-              <div className="border-4 border-foreground bg-accent px-3 py-4 shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] min-h-[120px] flex flex-col items-center justify-center gap-1">
-                <span className="text-xs text-background/70 tracking-widest">
+            <div className="border-2 border-dashed border-accent p-1 transition-transform group-hover:scale-105">
+              <div className="border-2 border-foreground bg-accent px-2 py-3 shadow-[3px_3px_0px_0px_rgba(250,250,250,1)] min-h-[80px] flex flex-col items-center justify-center gap-0.5">
+                <span className="text-[10px] text-background/70 tracking-widest">
                   ★ {tier.note} ★
                 </span>
-                <span className="text-2xl md:text-3xl font-bold text-background tracking-tight text-center">
+                <span className="text-lg md:text-xl font-bold text-background tracking-tight text-center">
                   {tier.label}
                 </span>
-                <span className="text-xs text-background/70 tracking-widest text-center">
+                <span className="text-[10px] text-background/70 tracking-widest text-center">
                   {tier.sublabel}
                 </span>
               </div>
@@ -80,7 +95,7 @@ export function DonateSection() {
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground tracking-wide text-center pt-2 border-t border-foreground/20">
+      <p className="text-[10px] text-muted-foreground tracking-wide text-center pt-2 border-t border-foreground/20">
         Contributions are not tax-deductible. Payments processed securely via Stripe.
       </p>
     </div>

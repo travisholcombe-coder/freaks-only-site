@@ -56,7 +56,7 @@ export function AlbumPlayer() {
       </div>
 
       {/* Track Info */}
-      <div className="w-full text-center pb-2">
+      <div className="w-full text-center pb-6">
         <div className="border-2 border-foreground bg-background px-3 py-2 mb-3">
           <p className="text-sm font-bold tracking-wider">
             {loading ? "TUNING IN..." : currentTrack.title}

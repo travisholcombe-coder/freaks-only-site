@@ -8,8 +8,6 @@ export function NowPlaying() {
   const [title, setTitle] = useState("WAITING FOR SIGNAL...")
   const [artist, setArtist] = useState("TUNE IN")
   const lastTrackRef = useRef("")
-  const animRef = useRef<Animation | null>(null)
-  const tickerRef = useRef<HTMLDivElement>(null)
 
   const fetchTrackData = async () => {
     try {
@@ -32,31 +30,22 @@ export function NowPlaying() {
     return () => clearInterval(interval)
   }, [])
 
-  // Start the Web Animations API animation once on mount — never restart it
-  useEffect(() => {
-    const el = tickerRef.current
-    if (!el) return
-
-    const totalWidth = el.scrollWidth / 2
-
-    animRef.current = el.animate(
-      [
-        { transform: "translateX(0)" },
-        { transform: `translateX(-${totalWidth}px)` },
-      ],
-      {
-        duration: 60000,
-        iterations: Infinity,
-        easing: "linear",
-      }
-    )
-
-    return () => {
-      animRef.current?.cancel()
-    }
-  }, [])
-
-  const tickerItems = Array(12).fill(null)
+  const TickerSegment = () => (
+    <span className="inline-flex items-center shrink-0">
+      {Array(6).fill(null).map((_, i) => (
+        <span key={i} className="inline-flex items-center gap-6 px-8">
+          <span className="text-accent text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap">
+            {artist}
+          </span>
+          <span className="text-foreground mx-1">—</span>
+          <span className="text-foreground text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap">
+            {title}
+          </span>
+          <span className="text-accent ml-4">★</span>
+        </span>
+      ))}
+    </span>
+  )
 
   return (
     <div className="border-4 border-foreground bg-secondary overflow-hidden">
@@ -65,21 +54,15 @@ export function NowPlaying() {
       </div>
       <div className="relative overflow-hidden py-4">
         <div
-          ref={tickerRef}
-          className="flex whitespace-nowrap will-change-transform"
+          className="flex whitespace-nowrap"
+          style={{
+            animation: "seamless-ticker 90s linear infinite",
+            willChange: "transform",
+          }}
         >
-          {tickerItems.map((_, i) => (
-            <span key={i} className="inline-flex items-center gap-6 px-8">
-              <span className="text-accent text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap">
-                {artist}
-              </span>
-              <span className="text-foreground">—</span>
-              <span className="text-foreground text-2xl md:text-3xl font-bold tracking-tight whitespace-nowrap">
-                {title}
-              </span>
-              <span className="text-accent">★</span>
-            </span>
-          ))}
+          {/* Two identical segments — when first scrolls out, second is identical so loop is invisible */}
+          <TickerSegment />
+          <TickerSegment />
         </div>
       </div>
     </div>

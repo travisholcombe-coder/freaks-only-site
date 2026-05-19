@@ -76,7 +76,7 @@ export function ContentGrid() {
         <AlbumPlayer />
 
         {/* Right Column - Schedule + Last Played stacked */}
-        <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex-1">
+        <div className="flex flex-col gap-4 h-full">
 
           {/* Transmission Schedule */}
           <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col">

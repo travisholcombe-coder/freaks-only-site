@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 interface Track {
   title: string
   artist: string
-  station?: string
+  cover_art: string | null
 }
 
 const METADATA_URL = "https://freaksonly-metadata.travis-holcombe.workers.dev/"
@@ -14,6 +14,7 @@ export function AlbumPlayer() {
   const [currentTrack, setCurrentTrack] = useState<Track>({
     title: "WAITING FOR SIGNAL",
     artist: "TUNE IN",
+    cover_art: null,
   })
   const [loading, setLoading] = useState(true)
 
@@ -24,6 +25,7 @@ export function AlbumPlayer() {
       setCurrentTrack({
         title: data.title || "WAITING FOR SIGNAL",
         artist: data.artist || "TUNE IN",
+        cover_art: data.cover_art || null,
       })
     } catch (err) {
       console.error("Failed to fetch track data:", err)
@@ -44,9 +46,12 @@ export function AlbumPlayer() {
       {/* Album Art */}
       <div className="border-4 border-foreground bg-background w-full aspect-square relative overflow-hidden">
         <img
-          src="/freaks-only-logo.jpg"
-          alt="Now Playing Album Art"
+          src={currentTrack.cover_art || "/freaks-only-logo.jpg"}
+          alt={currentTrack.cover_art ? `${currentTrack.title} by ${currentTrack.artist}` : "FREAKS ONLY FM"}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg"
+          }}
         />
       </div>
 
@@ -57,7 +62,7 @@ export function AlbumPlayer() {
             {loading ? "TUNING IN..." : currentTrack.title}
           </p>
         </div>
-        <p className="text-xs text-muted-foreground tracking-widest">
+        <p className="text-xs text-muted-foreground tracking-widest truncate">
           {loading ? "" : currentTrack.artist}
         </p>
       </div>

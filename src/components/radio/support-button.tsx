@@ -2,17 +2,20 @@
 
 export function SupportButton() {
   const handleClick = () => {
-    const donateSection = document.getElementById("donate")
-    if (donateSection) {
-      donateSection.scrollIntoView({ behavior: "smooth", block: "start" })
-    }
+    window.dispatchEvent(new Event("open-donate"))
+    setTimeout(() => {
+      const donateSection = document.getElementById("donate")
+      if (donateSection) {
+        donateSection.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
+    }, 50)
   }
 
   return (
     <button
       onClick={handleClick}
       className="inline-block stamp-effect cursor-pointer hover:scale-105 transition-transform"
-      aria-label="Scroll to donation options"
+      aria-label="Open donation options"
     >
       <div className="relative">
         {/* Outer stamp border */}

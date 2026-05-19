@@ -2,7 +2,6 @@
 
 import { Heart } from "lucide-react"
 
-// IMPORTANT: Replace these placeholder URLs with your actual Stripe Payment Link URLs
 const DONATION_TIERS = [
   {
     label: "$10",

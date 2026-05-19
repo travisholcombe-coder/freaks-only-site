@@ -66,7 +66,7 @@ export function ContentGrid() {
   const sortedSchedule = getSortedSchedule()
 
   return (
-    <div className="flex flex-col gap-4 p-4 pb-24">
+    <div className="flex flex-col gap-4 p-4 pt-2 pb-36">
       {/* Main Content Row - Player and Schedule Equal Width */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Album Player */}

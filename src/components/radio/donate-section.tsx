@@ -70,6 +70,11 @@ export function DonateSection() {
         </button>
       </div>
 
+      <p className="text-xs text-muted-foreground tracking-wide mb-4 max-w-2xl">
+        FREAKS ONLY is listener-supported radio. Your donation helps keep the signal strong,
+        pays for our licensing fees, and helps us purchase new music.
+      </p>
+
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
         {DONATION_TIERS.map((tier) => (
           <button

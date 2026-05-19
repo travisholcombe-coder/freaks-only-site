@@ -125,18 +125,18 @@ export function ContentGrid() {
         <MailingListBox />
 
         {/* App Coming Soon */}
-        <div className="border-4 border-foreground bg-accent text-background p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col justify-center min-h-[140px]">
-          <div className="flex items-center gap-2 mb-2">
-            <Smartphone className="w-5 h-5" />
-            <h2 className="text-lg font-bold tracking-wider">APP</h2>
-          </div>
-          <p className="text-sm opacity-90 tracking-wide">
-            COMING SOON
-          </p>
-          <div className="mt-3 border-2 border-background/50 px-2 py-1 inline-block w-fit">
-            <span className="text-xs tracking-widest">iOS + ANDROID</span>
-          </div>
-        </div>
+        <div className="border-4 border-foreground bg-accent text-background p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col justify-center items-center min-h-[140px] text-center">
+  <div className="flex items-center gap-2 mb-2">
+    <Smartphone className="w-5 h-5" />
+    <h2 className="text-lg font-bold tracking-wider">APP</h2>
+  </div>
+  <p className="text-sm opacity-90 tracking-wide">
+    COMING SOON
+  </p>
+  <div className="mt-3 border-2 border-background/50 px-2 py-1">
+    <span className="text-xs tracking-widest">iOS + ANDROID</span>
+  </div>
+</div>
       </div>
 
       {/* Donate Section */}

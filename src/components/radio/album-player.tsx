@@ -23,8 +23,8 @@ export function AlbumPlayer() {
       const res = await fetch(METADATA_URL)
       const data = await res.json()
       setCurrentTrack({
-        title: data.title || "WAITING FOR SIGNAL",
-        artist: data.artist || "TUNE IN",
+        title: data.title ? data.title.toUpperCase() : "WAITING FOR SIGNAL",
+        artist: data.artist ? data.artist.toUpperCase() : "TUNE IN",
         cover_art: data.cover_art || null,
       })
     } catch (err) {
@@ -56,13 +56,13 @@ export function AlbumPlayer() {
       </div>
 
       {/* Track Info */}
-      <div className="w-full text-center">
-        <div className="border-2 border-foreground bg-background px-3 py-2 mb-2">
-          <p className="text-sm font-bold tracking-wider truncate">
+      <div className="w-full text-center pb-2">
+        <div className="border-2 border-foreground bg-background px-3 py-2 mb-3">
+          <p className="text-sm font-bold tracking-wider">
             {loading ? "TUNING IN..." : currentTrack.title}
           </p>
         </div>
-        <p className="text-xs text-muted-foreground tracking-widest truncate pb-2">
+        <p className="text-xs text-foreground tracking-widest">
           {loading ? "" : currentTrack.artist}
         </p>
       </div>

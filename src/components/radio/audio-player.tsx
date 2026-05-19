@@ -1,136 +1,107 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useRef } from "react"
+import { Play, Pause, Volume2, VolumeX } from "lucide-react"
 
-interface Track {
-  title: string
-  artist: string
-  cover_art?: string
-}
+export function AudioPlayer() {
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+  const [volume, setVolume] = useState(0.8)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
-const STATION_ID = "a77923"
-const API_URL = `https://api.live365.com/station/${STATION_ID}`
-
-export function AlbumPlayer() {
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
-  const [history, setHistory] = useState<Track[]>([])
-  const [loading, setLoading] = useState(true)
-
-  const fetchTrackData = async () => {
-    try {
-      const res = await fetch(API_URL)
-      const data = await res.json()
-
-      // Current track
-      if (data?.track) {
-        setCurrentTrack({
-          title: data.track.title || "UNKNOWN TRACK",
-          artist: data.track.artist || "UNKNOWN ARTIST",
-          cover_art: data.track.cover_art_url || null,
-        })
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+      } else {
+        audioRef.current.play()
       }
-
-      // Recently played history
-      if (data?.history && Array.isArray(data.history)) {
-        setHistory(
-          data.history.slice(0, 4).map((t: any) => ({
-            title: t.title || "UNKNOWN TRACK",
-            artist: t.artist || "UNKNOWN ARTIST",
-            cover_art: t.cover_art_url || null,
-          }))
-        )
-      }
-    } catch (err) {
-      console.error("Failed to fetch track data:", err)
-    } finally {
-      setLoading(false)
+      setIsPlaying(!isPlaying)
     }
   }
 
-  useEffect(() => {
-    fetchTrackData()
-    const interval = setInterval(fetchTrackData, 30000)
-    return () => clearInterval(interval)
-  }, [])
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value)
+    setVolume(newVolume)
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume
+    }
+  }
 
   return (
-    <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col gap-4">
+    <div className="fixed bottom-0 left-0 right-0 border-t-4 border-foreground bg-background z-50">
+      <audio
+        ref={audioRef}
+        src="https://streaming.live365.com/a77923"
+        preload="none"
+      />
 
-      {/* Now Playing */}
-      <div className="flex items-center gap-4">
-        {/* Album Art */}
-        <div className="border-4 border-foreground bg-background w-24 h-24 flex-shrink-0 overflow-hidden">
-          <img
-            src={currentTrack?.cover_art || "/freaks-only-logo.jpg"}
-            alt={currentTrack ? `${currentTrack.title} by ${currentTrack.artist}` : "Now Playing Album Art"}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg"
-            }}
-          />
-        </div>
-
-        {/* Track Info */}
-        <div className="flex flex-col gap-1 min-w-0">
-          <span className="text-xs font-bold tracking-widest text-muted-foreground uppercase">Now Playing</span>
-          {loading ? (
-            <span className="text-sm font-bold tracking-wider text-muted-foreground animate-pulse">
-              TUNING IN...
+      <div className="flex items-center justify-between px-4 py-3 gap-4">
+        {/* Live Indicator */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-accent rounded-full animate-pulse" />
+            <span className="text-xs font-bold tracking-widest text-accent">
+              LIVE
             </span>
-          ) : (
-            <>
-              <div className="border-2 border-foreground bg-background px-3 py-2">
-                <p className="text-sm font-bold tracking-wider truncate">
-                  {currentTrack?.title || "WAITING FOR SIGNAL"}
-                </p>
-              </div>
-              <p className="text-xs text-muted-foreground tracking-widest truncate">
-                {currentTrack?.artist || "TUNE IN"}
-              </p>
-            </>
-          )}
+          </div>
+          <div className="hidden sm:block h-6 w-px bg-foreground/30" />
+          <span className="hidden sm:block text-xs text-muted-foreground tracking-wider">
+            24/7 BROADCAST
+          </span>
         </div>
-      </div>
 
-      {/* Recently Played */}
-      {history.length > 0 && (
-        <div className="border-t-2 border-foreground/30 pt-3">
-          <p className="text-xs font-bold tracking-widest text-muted-foreground mb-2 uppercase">
-            Recently Played
-          </p>
-          <div className="space-y-0">
-            {history.map((track, i) => (
-              <div
-                key={i}
-                className={`flex items-center gap-3 py-2 ${
-                  i !== history.length - 1 ? "border-b border-foreground/10" : ""
-                }`}
-              >
-                {/* Mini album art */}
-                <div className="w-8 h-8 flex-shrink-0 border border-foreground/30 overflow-hidden">
-                  <img
-                    src={track.cover_art || "/freaks-only-logo.jpg"}
-                    alt={track.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg"
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between items-center flex-1 min-w-0 gap-2">
-                  <span className="text-xs font-bold tracking-wider text-foreground truncate">
-                    {track.title}
-                  </span>
-                  <span className="text-xs text-muted-foreground tracking-wider truncate flex-shrink-0">
-                    {track.artist}
-                  </span>
-                </div>
-              </div>
-            ))}
+        {/* Player Controls */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={togglePlay}
+            className="border-4 border-foreground bg-accent p-3 shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100 active:shadow-none active:translate-x-1 active:translate-y-1"
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <Pause className="w-6 h-6 text-background" fill="currentColor" />
+            ) : (
+              <Play className="w-6 h-6 text-background" fill="currentColor" />
+            )}
+          </button>
+
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={toggleMute}
+              className="p-2 hover:text-accent transition-colors"
+              aria-label={isMuted ? "Unmute" : "Mute"}
+            >
+              {isMuted ? (
+                <VolumeX className="w-5 h-5" />
+              ) : (
+                <Volume2 className="w-5 h-5" />
+              )}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-20 h-2 bg-secondary border-2 border-foreground appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-foreground [&::-webkit-slider-thumb]:cursor-pointer"
+              aria-label="Volume"
+            />
           </div>
         </div>
-      )}
 
+        {/* Station ID */}
+        <div className="hidden sm:flex items-center gap-2 border-2 border-foreground px-3 py-1 bg-secondary">
+          <span className="text-xs tracking-widest">FREAKSONLY.FM</span>
+        </div>
+      </div>
     </div>
   )
 }

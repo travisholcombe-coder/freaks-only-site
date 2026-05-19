@@ -45,7 +45,7 @@ export function LastPlayed() {
   }, [])
 
   return (
-    <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)]">
+    <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex-1">
       <div className="flex items-center gap-2 mb-4">
         <Clock className="w-5 h-5 text-accent" />
         <h2 className="text-lg font-bold tracking-wider">LAST PLAYED</h2>

@@ -13,7 +13,7 @@ export function NowPlaying() {
 
   useEffect(() => {
     const updateDuration = () => {
-      setDuration(window.innerWidth < 768 ? "28s" : "90s")
+      setDuration(window.innerWidth < 768 ? "18s" : "90s")
     }
     updateDuration()
     window.addEventListener("resize", updateDuration)

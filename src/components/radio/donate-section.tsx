@@ -36,6 +36,10 @@ const DONATION_TIERS = [
 ]
 
 export function DonateSection() {
+  const handleClick = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer")
+  }
+
   return (
     <div
       id="donate"
@@ -51,15 +55,12 @@ export function DonateSection() {
         signal alive — no ads, no corporate underwriting, just freaks playing records for freaks.
       </p>
 
-      {/* Donation tiles grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
         {DONATION_TIERS.map((tier) => (
-          
+          <button
             key={tier.label}
-            href={tier.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group block"
+            onClick={() => handleClick(tier.url)}
+            className="group block text-left"
             aria-label={`Donate ${tier.label} ${tier.sublabel}`}
           >
             <div className="border-4 border-dashed border-accent p-1 transition-transform group-hover:scale-105">
@@ -75,7 +76,7 @@ export function DonateSection() {
                 </span>
               </div>
             </div>
-          </a>
+          </button>
         ))}
       </div>
 

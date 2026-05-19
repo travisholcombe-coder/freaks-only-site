@@ -36,7 +36,7 @@ export function AudioPlayer() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t-4 border-foreground bg-background z-50">
+    <div className="fixed bottom-0 left-0 right-0 border-t-4 border-foreground z-50" style={{backgroundColor: '#111111'}}>
       <audio
         ref={audioRef}
         src="https://streaming.live365.com/a77923"

@@ -12,7 +12,7 @@ export default function Home() {
       {/* Thanks Banner (shows after Stripe donation redirect) */}
       <ThanksBanner />
       {/* Now Playing Ticker */}
-      <div className="p-4">
+      <div className="hidden md:block md:p-4">
         <NowPlaying />
       </div>
       {/* Raw Grid Content */}

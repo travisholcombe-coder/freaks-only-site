@@ -62,7 +62,7 @@ export function AlbumPlayer() {
             {loading ? "TUNING IN..." : currentTrack.title}
           </p>
         </div>
-        <p className="text-xs text-muted-foreground tracking-widest truncate">
+        <p className="text-xs text-muted-foreground tracking-widest truncate pb-2">
           {loading ? "" : currentTrack.artist}
         </p>
       </div>

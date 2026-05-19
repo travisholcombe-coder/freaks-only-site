@@ -6,6 +6,7 @@ import { AlbumPlayer } from "./album-player"
 import { MailingListBox } from "./mailing-list-box"
 import { SocialLinks } from "./social-links"
 import { DonateSection } from "./donate-section"
+import { LastPlayed } from "./last-played"
 import { Zap, Smartphone } from "lucide-react"
 
 const schedule = [
@@ -56,7 +57,7 @@ const schedule = [
 const dayKeys = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
 
 function getSortedSchedule() {
-  const todayIndex = new Date().getDay() // 0 = SUN, 1 = MON, etc.
+  const todayIndex = new Date().getDay()
   const todayKey = dayKeys[todayIndex]
   const startIndex = schedule.findIndex((d) => d.day === todayKey)
   return [...schedule.slice(startIndex), ...schedule.slice(0, startIndex)]
@@ -67,8 +68,10 @@ export function ContentGrid() {
 
   return (
     <div className="flex flex-col gap-4 p-4 pt-2 pb-36">
-      {/* Main Content Row - Player and Schedule Equal Width */}
+
+      {/* Main Content Row - Album Player + Schedule */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
         {/* Album Player */}
         <AlbumPlayer />
 
@@ -78,14 +81,16 @@ export function ContentGrid() {
             <Zap className="w-5 h-5 text-accent" />
             <h2 className="text-lg font-bold tracking-wider">TRANSMISSION SCHEDULE</h2>
           </div>
-          <div className="flex-1 overflow-y-auto max-h-[400px] space-y-0 text-sm">
+
+          {/* First 2 days always visible, rest scrollable */}
+          <div className="flex-1 overflow-y-auto max-h-[280px] space-y-0 text-sm">
             {sortedSchedule.map((daySchedule, dayIndex) => (
               <div
                 key={daySchedule.day}
                 className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
               >
-                <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider">
-                  {daySchedule.day}
+                <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider sticky top-0">
+                  {dayIndex === 0 ? `${daySchedule.day} — TODAY` : dayIndex === 1 ? `${daySchedule.day} — TOMORROW` : daySchedule.day}
                 </div>
                 {daySchedule.slots.map((slot, slotIndex) => (
                   <div
@@ -101,6 +106,7 @@ export function ContentGrid() {
               </div>
             ))}
           </div>
+
           <div className="mt-4 pt-4 border-t-2 border-foreground/30">
             <p className="text-xs text-muted-foreground tracking-wider text-center">
               ALL TIMES PST // SCHEDULE SUBJECT TO CHANGE
@@ -109,8 +115,12 @@ export function ContentGrid() {
         </div>
       </div>
 
+      {/* Last Played - Full Width */}
+      <LastPlayed />
+
       {/* Bottom Row - Action Items */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
         {/* Support Block */}
         <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex items-center justify-center min-h-[140px]">
           <SupportButton />
@@ -126,17 +136,17 @@ export function ContentGrid() {
 
         {/* App Coming Soon */}
         <div className="border-4 border-foreground bg-accent text-background p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col justify-center items-center min-h-[140px] text-center">
-  <div className="flex items-center gap-2 mb-2">
-    <Smartphone className="w-5 h-5" />
-    <h2 className="text-lg font-bold tracking-wider">APP</h2>
-  </div>
-  <p className="text-sm opacity-90 tracking-wide">
-    COMING SOON
-  </p>
-  <div className="mt-3 border-2 border-background/50 px-2 py-1">
-    <span className="text-xs tracking-widest">iOS + ANDROID</span>
-  </div>
-</div>
+          <div className="flex items-center gap-2 mb-2">
+            <Smartphone className="w-5 h-5" />
+            <h2 className="text-lg font-bold tracking-wider">APP</h2>
+          </div>
+          <p className="text-sm opacity-90 tracking-wide">
+            COMING SOON
+          </p>
+          <div className="mt-3 border-2 border-background/50 px-2 py-1">
+            <span className="text-xs tracking-widest">iOS + ANDROID</span>
+          </div>
+        </div>
       </div>
 
       {/* Donate Section */}

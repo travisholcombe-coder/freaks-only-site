@@ -9,6 +9,16 @@ export function NowPlaying() {
   const [artist, setArtist] = useState("TUNE IN")
   const [opacity, setOpacity] = useState(1)
   const lastTrackRef = useRef("")
+  const [duration, setDuration] = useState("90s")
+
+  useEffect(() => {
+    const updateDuration = () => {
+      setDuration(window.innerWidth < 768 ? "40s" : "90s")
+    }
+    updateDuration()
+    window.addEventListener("resize", updateDuration)
+    return () => window.removeEventListener("resize", updateDuration)
+  }, [])
 
   const fetchTrackData = async () => {
     try {
@@ -18,11 +28,7 @@ export function NowPlaying() {
 
       if (newKey !== lastTrackRef.current && data.title && data.artist) {
         lastTrackRef.current = newKey
-
-        // Slow fade out
         setOpacity(0)
-
-        // Update text while invisible, then fade back in quickly
         setTimeout(() => {
           setTitle(data.title.toUpperCase())
           setArtist(data.artist.toUpperCase())
@@ -49,7 +55,7 @@ export function NowPlaying() {
         <div
           className="flex whitespace-nowrap"
           style={{
-            animation: "seamless-ticker 90s linear infinite",
+            animation: `seamless-ticker ${duration} linear infinite`,
             willChange: "transform",
             opacity: opacity,
             transition: opacity === 0

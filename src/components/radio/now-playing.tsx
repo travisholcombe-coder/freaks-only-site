@@ -47,7 +47,7 @@ export function NowPlaying() {
   }, [])
 
   return (
-    <div className="border-4 border-foreground bg-secondary overflow-hidden">
+    <div className="hidden md:block border-4 border-foreground bg-secondary overflow-hidden">
       <div className="bg-foreground text-background px-3 py-1 text-xs tracking-widest font-bold">
         NOW PLAYING
       </div>

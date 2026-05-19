@@ -48,9 +48,14 @@ export default {
       },
       animation: {
         ticker: "ticker 30s linear infinite",
+        "seamless-ticker": "seamless-ticker 60s linear infinite",
       },
       keyframes: {
         ticker: {
+          "0%":   { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "seamless-ticker": {
           "0%":   { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },

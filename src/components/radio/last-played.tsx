@@ -76,7 +76,7 @@ export function LastPlayed() {
                 />
               </div>
 
-              {/* Track Info */}
+              {/* Track Info + Time */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold tracking-wider truncate">
                   {track.title.toUpperCase()}
@@ -84,11 +84,8 @@ export function LastPlayed() {
                 <p className="text-xs text-muted-foreground tracking-widest truncate">
                   {track.artist.toUpperCase()}
                 </p>
-              </div>
-
-              {/* Time ago */}
-              <div className="flex-shrink-0 text-right">
-                <p className="text-xs text-muted-foreground tracking-wider whitespace-nowrap">
+                {/* Time on its own line — always visible */}
+                <p className="text-xs text-muted-foreground tracking-wider mt-0.5">
                   {timeAgo(track.played_at)}
                 </p>
               </div>

@@ -40,18 +40,14 @@ const schedule = [
     { time: "8PM-12AM", show: "AUX OUT" },
     { time: "12AM-8AM", show: "FREAK PARADE" },
   ]},
-  { day: "SAT", slots: [
-    { time: "6AM-12PM", show: "TBA" },
-    { time: "12PM-6PM", show: "TBA" },
-    { time: "6PM-12AM", show: "TBA" },
-    { time: "12AM-6AM", show: "TBA" },
-  ]},
-  { day: "SUN", slots: [
-    { time: "6AM-12PM", show: "TBA" },
-    { time: "12PM-6PM", show: "TBA" },
-    { time: "6PM-12AM", show: "TBA" },
-    { time: "12AM-6AM", show: "TBA" },
-  ]},
+{ day: "SAT", slots: [
+  { time: "8AM-12PM", show: "FREAK PARADE" },
+  { time: "12PM-4AM", show: "AUX OUT" },
+]},
+{ day: "SUN", slots: [
+  { time: "4AM-4PM", show: "THE PERCOLATOR" },
+  { time: "4PM-8AM", show: "FREAK PARADE" },
+]},
 ]
 
 const dayKeys = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]

@@ -45,8 +45,8 @@ const schedule = [
   { time: "8PM-4AM", show: "AUX OUT" },
 ]},
 { day: "SUN", slots: [
-  { time: "4AM-4PM", show: "THE PERCOLATOR" },
-  { time: "4PM-8AM", show: "FREAK PARADE" },
+  { time: "4AM-8PM", show: "THE PERCOLATOR" },
+  { time: "8PM-8AM", show: "FREAK PARADE" },
 ]},
 ]
 

@@ -13,7 +13,7 @@ export function MinnitChat() {
         style={{ display: "none" }}
         className="minnit-chat-sembed"
         data-chatname="https://organizations.minnit.chat/562854651725297/c/Main?embed"
-        data-style="width:100%; height:450px;"
+        data-style="width:100%; height:520px;"
         data-version="1.55"
       >
         Chat

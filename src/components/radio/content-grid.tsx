@@ -7,7 +7,7 @@ import { MailingListBox } from "./mailing-list-box"
 import { SocialLinks } from "./social-links"
 import { DonateSection } from "./donate-section"
 import { LastPlayed } from "./last-played"
-import { Zap, Smartphone } from "lucide-react"
+import { Zap, Smartphone, MessageCircle } from "lucide-react"
 
 const schedule = [
   { day: "MON", slots: [
@@ -65,55 +65,81 @@ export function ContentGrid() {
   return (
     <div className="flex flex-col gap-4 p-4 pt-2 pb-36">
 
-      {/* Main Content Row - Album Player left, Schedule + Last Played right */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:items-start">
+      {/*
+        Main content grid.
+        Mobile (grid-cols-1): order-* controls stacking —
+          1. AlbumPlayer
+          2. LastPlayed
+          3. Chat
+          4. Schedule
+        Desktop (md:grid-cols-4): explicit spans/order place AlbumPlayer
+        as a big left block (2 cols x 2 rows), with Schedule + Chat
+        50/50 in the top-right and LastPlayed spanning the bottom-right.
+      */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:items-start">
 
-        {/* Left Column - Album Player */}
-        <AlbumPlayer />
+        {/* Album Player */}
+        <div className="order-1 md:order-1 md:col-span-2 md:row-span-2">
+          <AlbumPlayer />
+        </div>
 
-        {/* Right Column - Schedule + Last Played stacked */}
-        <div className="flex flex-col gap-4 h-full">
-
-          {/* Transmission Schedule */}
-          <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col">
-            <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-5 h-5 text-accent" />
-              <h2 className="text-lg font-bold tracking-wider">TRANSMISSION SCHEDULE</h2>
-            </div>
-            <div className="flex-1 overflow-y-auto max-h-[280px] space-y-0 text-sm">
-              {sortedSchedule.map((daySchedule, dayIndex) => (
-                <div
-                  key={daySchedule.day}
-                  className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
-                >
-                  <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider sticky top-0">
-                    {dayIndex === 0 ? `${daySchedule.day} — TODAY` : dayIndex === 1 ? `${daySchedule.day} — TOMORROW` : daySchedule.day}
-                  </div>
-                  {daySchedule.slots.map((slot, slotIndex) => (
-                    <div
-                      key={`${daySchedule.day}-${slotIndex}`}
-                      className={`flex justify-between items-center px-2 py-2 ${
-                        slotIndex !== daySchedule.slots.length - 1 ? "border-b border-foreground/10" : ""
-                      }`}
-                    >
-                      <span className="text-muted-foreground text-xs tracking-wider w-24">{slot.time}</span>
-                      <span className="text-foreground text-xs tracking-wider">{slot.show}</span>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 pt-4 border-t-2 border-foreground/30">
-              <p className="text-xs text-muted-foreground tracking-wider text-center">
-                ALL TIMES PST // SCHEDULE SUBJECT TO CHANGE
-              </p>
-            </div>
-          </div>
-
-          {/* Last Played - directly under Schedule */}
+        {/* Last Played */}
+        <div className="order-2 md:order-4 md:col-span-2">
           <LastPlayed />
+        </div>
 
-        </div>{/* end right column */}
+        {/* Minnit Chat Widget */}
+        <div className="order-3 md:order-3 border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col">
+          <div className="flex items-center gap-2 mb-4">
+            <MessageCircle className="w-5 h-5 text-accent" />
+            <h2 className="text-lg font-bold tracking-wider">LISTENER CHAT</h2>
+          </div>
+          <div className="flex-1 min-h-[280px]">
+            <iframe
+              src="https://YOUR-ROOM-NAME.minnit.chat/"
+              className="w-full h-full min-h-[280px] border-0"
+              title="FREAKS ONLY FM Listener Chat"
+              allow="clipboard-write"
+            />
+          </div>
+        </div>
+
+        {/* Transmission Schedule */}
+        <div className="order-4 md:order-2 border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)] flex flex-col">
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="w-5 h-5 text-accent" />
+            <h2 className="text-lg font-bold tracking-wider">TRANSMISSION SCHEDULE</h2>
+          </div>
+          <div className="flex-1 overflow-y-auto max-h-[280px] space-y-0 text-sm">
+            {sortedSchedule.map((daySchedule, dayIndex) => (
+              <div
+                key={daySchedule.day}
+                className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
+              >
+                <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider sticky top-0">
+                  {dayIndex === 0 ? `${daySchedule.day} — TODAY` : dayIndex === 1 ? `${daySchedule.day} — TOMORROW` : daySchedule.day}
+                </div>
+                {daySchedule.slots.map((slot, slotIndex) => (
+                  <div
+                    key={`${daySchedule.day}-${slotIndex}`}
+                    className={`flex justify-between items-center px-2 py-2 ${
+                      slotIndex !== daySchedule.slots.length - 1 ? "border-b border-foreground/10" : ""
+                    }`}
+                  >
+                    <span className="text-muted-foreground text-xs tracking-wider w-24">{slot.time}</span>
+                    <span className="text-foreground text-xs tracking-wider">{slot.show}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t-2 border-foreground/30">
+            <p className="text-xs text-muted-foreground tracking-wider text-center">
+              ALL TIMES PST // SCHEDULE SUBJECT TO CHANGE
+            </p>
+          </div>
+        </div>
+
       </div>{/* end main grid */}
 
       {/* Bottom Row - Action Items */}

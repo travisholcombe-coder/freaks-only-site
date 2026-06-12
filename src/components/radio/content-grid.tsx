@@ -7,6 +7,7 @@ import { MailingListBox } from "./mailing-list-box"
 import { SocialLinks } from "./social-links"
 import { DonateSection } from "./donate-section"
 import { LastPlayed } from "./last-played"
+import { MinnitChat } from "./minnit-chat"
 import { Zap, Smartphone, MessageCircle } from "lucide-react"
 
 const schedule = [
@@ -94,14 +95,7 @@ export function ContentGrid() {
             <MessageCircle className="w-5 h-5 text-accent" />
             <h2 className="text-lg font-bold tracking-wider">LISTENER CHAT</h2>
           </div>
-          <div className="flex-1 min-h-[280px]">
-            <iframe
-              src="https://YOUR-ROOM-NAME.minnit.chat/"
-              className="w-full h-full min-h-[280px] border-0"
-              title="FREAKS ONLY FM Listener Chat"
-              allow="clipboard-write"
-            />
-          </div>
+          <MinnitChat />
         </div>
 
         {/* Transmission Schedule */}

@@ -7,7 +7,7 @@ import { MailingListBox } from "./mailing-list-box"
 import { SocialLinks } from "./social-links"
 import { DonateSection } from "./donate-section"
 import { LastPlayed } from "./last-played"
-import { MinnitChat } from "./minnit-chat"
+import { MinnitChat } from "../minnit-chat"
 import { Zap, Smartphone, MessageCircle } from "lucide-react"
 
 const schedule = [

@@ -1,0 +1,28 @@
+"use client"
+
+import Script from "next/script"
+
+export function MinnitChat() {
+  return (
+    <>
+      <Script
+        src="https://minnit.chat/js/embed.js?c=1772345192"
+        strategy="lazyOnload"
+      />
+      <span
+        style={{ display: "none" }}
+        className="minnit-chat-sembed"
+        data-chatname="https://organizations.minnit.chat/562854651725297/c/Main?embed"
+        data-style="width:100%; height:450px;"
+        data-version="1.55"
+      >
+        Chat
+      </span>
+      <p className="powered-by-minnit text-xs text-muted-foreground text-center mt-2">
+        <a href="https://minnit.chat" target="_blank" rel="noopener noreferrer">
+          Add a group chat to your website with Minnit Chat
+        </a>
+      </p>
+    </>
+  )
+}

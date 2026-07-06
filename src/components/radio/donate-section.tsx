@@ -1,56 +1,49 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { Heart } from "lucide-react"
-
 const DONATION_TIERS = [
   {
     label: "$10",
     sublabel: "PER MONTH",
     note: "MONTHLY SUPPORT",
-    url: "https://buy.stripe.com/aFadR16l37VjcdvfWt3Nm00",
+    url: "https://buy.stripe.com/6oU14feRz8Zn6TbfWt3Nm06",
   },
   {
     label: "$25",
     sublabel: "PER MONTH",
     note: "MONTHLY SUPPORT",
-    url: "https://buy.stripe.com/9B628jaBj3F3a5ncKh3Nm01",
+    url: "https://buy.stripe.com/9B67sD5gZ5Nbb9r6lT3Nm07",
   },
   {
     label: "CUSTOM",
     sublabel: "YOUR CHOICE",
     note: "ONE-TIME GIFT",
-    url: "https://buy.stripe.com/dRm4grcJr6Rfa5n7pX3Nm05",
+    url: "https://buy.stripe.com/14A8wHaBj0sRa5n4dL3Nm0a",
   },
   {
     label: "$100",
     sublabel: "ONE-TIME",
     note: "ONE-TIME GIFT",
-    url: "https://buy.stripe.com/9B600b38R1wVb9r6lT3Nm02",
+    url: "https://buy.stripe.com/4gMaEP7p77VjgtLbGd3Nm08",
   },
   {
     label: "$1,000",
     sublabel: "ONE-TIME",
     note: "ONE-TIME GIFT",
-    url: "https://buy.stripe.com/5kQ28j7p72AZ4L3aC93Nm03",
+    url: "https://buy.stripe.com/fZu6ozeRzcbz91j25D3Nm09",
   },
 ]
-
 export function DonateSection() {
   const [open, setOpen] = useState(false)
-
   useEffect(() => {
     const handleOpenDonate = () => setOpen(true)
     window.addEventListener("open-donate", handleOpenDonate)
     return () => window.removeEventListener("open-donate", handleOpenDonate)
   }, [])
-
   const handleClick = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer")
   }
-
   if (!open) return null
-
   return (
     <div
       id="donate"
@@ -69,12 +62,10 @@ export function DonateSection() {
           CLOSE ×
         </button>
       </div>
-
       <p className="text-xs text-muted-foreground tracking-wide mb-4 max-w-2xl">
   FREAKS ONLY is listener-funded radio with no algorithm. Your donation keeps us on the air —
   covering streaming costs, licensing, and new music for the library.
 </p>
-
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
         {DONATION_TIERS.map((tier) => (
           <button
@@ -99,7 +90,6 @@ export function DonateSection() {
           </button>
         ))}
       </div>
-
       <p className="text-[10px] text-muted-foreground tracking-wide text-center pt-2 border-t border-foreground/20">
         Contributions are not tax-deductible. Payments processed securely via Stripe.
       </p>

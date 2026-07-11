@@ -45,6 +45,22 @@ export function AudioPlayer() {
     navigator.mediaSession.setActionHandler("pause", () => {
       audioRef.current?.pause()
     })
+    // Live stream: no scrubbing or track-skipping — clear those controls so the
+    // OS shows just play/pause (no ±10s skip buttons on the lock screen).
+    const noSeek: MediaSessionAction[] = [
+      "seekbackward",
+      "seekforward",
+      "seekto",
+      "previoustrack",
+      "nexttrack",
+    ]
+    for (const action of noSeek) {
+      try {
+        navigator.mediaSession.setActionHandler(action, null)
+      } catch {
+        // Some browsers don't know this action — safe to ignore
+      }
+    }
     return () => {
       navigator.mediaSession.setActionHandler("play", null)
       navigator.mediaSession.setActionHandler("pause", null)
@@ -99,33 +115,4 @@ export function AudioPlayer() {
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={toggleMute}
-              className="p-2 hover:text-accent transition-colors"
-              aria-label={isMuted ? "Unmute" : "Mute"}
-            >
-              {isMuted ? (
-                <VolumeX className="w-5 h-5" />
-              ) : (
-                <Volume2 className="w-5 h-5" />
-              )}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={isMuted ? 0 : volume}
-              onChange={handleVolumeChange}
-              className="w-20 h-2 bg-secondary border-2 border-foreground appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-foreground [&::-webkit-slider-thumb]:cursor-pointer"
-              aria-label="Volume"
-            />
-          </div>
-        </div>
-
-        {/* Station ID */}
-        <div className="hidden sm:flex items-center gap-2 border-2 border-foreground px-3 py-1 bg-secondary">
-          <span className="text-xs tracking-widest">FREAKSONLY.FM</span>
-        </div>
-      </div>
-    </div>
-  )
-}
+              className="p-2 hover:text-accent

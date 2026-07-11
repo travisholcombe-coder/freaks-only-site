@@ -9,6 +9,32 @@ interface Track {
 }
 
 const METADATA_URL = "https://freaksonly-metadata.travis-holcombe.workers.dev/"
+const LOGO_URL = "https://freaksonly.fm/freaks-only-logo.jpg"
+
+// Push current track to the OS lock screen / car display via the Media Session API.
+// Writing to the global navigator.mediaSession is completely decoupled from playback
+// (that lives in audio-player.tsx) — this just supplies what to show.
+function updateMediaSessionMetadata(track: Track) {
+  if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return
+  const art = track.cover_art || LOGO_URL
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: track.title,
+      artist: track.artist,
+      album: "FREAKS ONLY FM",
+      artwork: [
+        { src: art, sizes: "96x96" },
+        { src: art, sizes: "128x128" },
+        { src: art, sizes: "192x192" },
+        { src: art, sizes: "256x256" },
+        { src: art, sizes: "384x384" },
+        { src: art, sizes: "512x512" },
+      ],
+    })
+  } catch {
+    // MediaMetadata unsupported on this browser — ignore, playback is unaffected
+  }
+}
 
 export function AlbumPlayer() {
   const [currentTrack, setCurrentTrack] = useState<Track>({
@@ -22,11 +48,13 @@ export function AlbumPlayer() {
     try {
       const res = await fetch(METADATA_URL)
       const data = await res.json()
-      setCurrentTrack({
+      const next: Track = {
         title: data.title ? data.title.toUpperCase() : "WAITING FOR SIGNAL",
         artist: data.artist ? data.artist.toUpperCase() : "TUNE IN",
         cover_art: data.cover_art || null,
-      })
+      }
+      setCurrentTrack(next)
+      updateMediaSessionMetadata(next)
     } catch (err) {
       console.error("Failed to fetch track data:", err)
     } finally {

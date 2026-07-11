@@ -9,16 +9,31 @@ export function AudioPlayer() {
   const [volume, setVolume] = useState(0.8)
   const audioRef = useRef<HTMLAudioElement>(null)
 
+  // Live radio: every "play" should reconnect to the LIVE edge, not resume a
+  // stale buffer from a previous pause. Calling load() drops the old buffer and
+  // opens a fresh stream connection — this is what fixes the resume-then-glitch
+  // issue (and removes any need to manually refresh Safari).
+  const startLive = () => {
+    const a = audioRef.current
+    if (!a) return
+    try {
+      a.load()
+    } catch {
+      // ignore — play() below will still attempt to start
+    }
+    a.play()?.catch(() => {})
+  }
+
   const togglePlay = () => {
     const a = audioRef.current
     if (!a) return
     if (isPlaying) {
       a.pause()
     } else {
-      a.play()?.catch(() => {})
+      startLive()
     }
-    // State + mediaSession.playbackState are synced by the audio element's
-    // onPlay/onPause handlers below, so lock-screen and OS controls stay in step.
+    // isPlaying + mediaSession.playbackState are synced by the audio element's
+    // onPlay/onPause handlers below, so UI, lock screen, and car stay in step.
   }
 
   const toggleMute = () => {
@@ -36,11 +51,13 @@ export function AudioPlayer() {
     }
   }
 
-  // Wire the lock screen / car head-unit play & pause buttons to this audio element.
+  // Wire the lock screen / car head-unit play & pause buttons to this audio
+  // element. "play" goes through startLive() so a resume from the car also
+  // reconnects to the live edge rather than replaying stale audio.
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return
     navigator.mediaSession.setActionHandler("play", () => {
-      audioRef.current?.play()?.catch(() => {})
+      startLive()
     })
     navigator.mediaSession.setActionHandler("pause", () => {
       audioRef.current?.pause()
@@ -115,4 +132,33 @@ export function AudioPlayer() {
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={toggleMute}
-              className="p-2 hover:text-accent
+              className="p-2 hover:text-accent transition-colors"
+              aria-label={isMuted ? "Unmute" : "Mute"}
+            >
+              {isMuted ? (
+                <VolumeX className="w-5 h-5" />
+              ) : (
+                <Volume2 className="w-5 h-5" />
+              )}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-20 h-2 bg-secondary border-2 border-foreground appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-accent [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-foreground [&::-webkit-slider-thumb]:cursor-pointer"
+              aria-label="Volume"
+            />
+          </div>
+        </div>
+
+        {/* Station ID */}
+        <div className="hidden sm:flex items-center gap-2 border-2 border-foreground px-3 py-1 bg-secondary">
+          <span className="text-xs tracking-widest">FREAKSONLY.FM</span>
+        </div>
+      </div>
+    </div>
+  )
+}

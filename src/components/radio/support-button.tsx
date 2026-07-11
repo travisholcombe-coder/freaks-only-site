@@ -30,7 +30,7 @@ export function SupportButton() {
                 FREAKS ONLY FM
               </span>
               <span className="text-[10px] text-background/90 tracking-wide leading-tight text-center max-w-[180px] pt-1">
-                Listener-funded. No algorithm. Your donation keeps us on the air.
+                Listener-funded. All rhythm, no algorithm. Your donation keeps us on the air.
               </span>
             </div>
           </div>

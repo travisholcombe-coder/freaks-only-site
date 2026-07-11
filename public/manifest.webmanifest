@@ -1,0 +1,14 @@
+{
+  "name": "FREAKS ONLY FM",
+  "short_name": "FREAKS ONLY",
+  "description": "Internet radio from Los Angeles. Punk, funk, disco, post-punk. Listener-funded, no algorithm.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "/freaks-only-logo.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
+    { "src": "/freaks-only-logo.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" }
+  ]
+}

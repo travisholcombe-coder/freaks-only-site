@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Play, Pause, Volume2, VolumeX } from "lucide-react"
 
 export function AudioPlayer() {
@@ -10,14 +10,15 @@ export function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
-      }
-      setIsPlaying(!isPlaying)
+    const a = audioRef.current
+    if (!a) return
+    if (isPlaying) {
+      a.pause()
+    } else {
+      a.play()?.catch(() => {})
     }
+    // State + mediaSession.playbackState are synced by the audio element's
+    // onPlay/onPause handlers below, so lock-screen and OS controls stay in step.
   }
 
   const toggleMute = () => {
@@ -35,12 +36,35 @@ export function AudioPlayer() {
     }
   }
 
+  // Wire the lock screen / car head-unit play & pause buttons to this audio element.
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return
+    navigator.mediaSession.setActionHandler("play", () => {
+      audioRef.current?.play()?.catch(() => {})
+    })
+    navigator.mediaSession.setActionHandler("pause", () => {
+      audioRef.current?.pause()
+    })
+    return () => {
+      navigator.mediaSession.setActionHandler("play", null)
+      navigator.mediaSession.setActionHandler("pause", null)
+    }
+  }, [])
+
   return (
     <div className="fixed bottom-0 left-0 right-0 border-t-4 border-foreground z-50" style={{backgroundColor: '#111111'}}>
       <audio
         ref={audioRef}
         src="https://streaming.live365.com/a77923"
         preload="none"
+        onPlay={() => {
+          setIsPlaying(true)
+          if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing"
+        }}
+        onPause={() => {
+          setIsPlaying(false)
+          if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused"
+        }}
       />
 
       <div className="flex items-center justify-between px-4 py-3 gap-4">

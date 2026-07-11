@@ -22,6 +22,17 @@ function timeAgo(timestamp: number): string {
   return `${hrs} HRS AGO`
 }
 
+// Build search deep-links from the raw (original-case) artist + title.
+// These are plain search URLs — no API auth — and resolve to the native
+// app via universal links when Spotify / Apple Music is installed.
+function spotifyUrl(track: HistoryTrack): string {
+  return `https://open.spotify.com/search/${encodeURIComponent(`${track.artist} ${track.title}`)}`
+}
+
+function appleMusicUrl(track: HistoryTrack): string {
+  return `https://music.apple.com/us/search?term=${encodeURIComponent(`${track.artist} ${track.title}`)}`
+}
+
 export function LastPlayed() {
   const [history, setHistory] = useState<HistoryTrack[]>([])
   const [loading, setLoading] = useState(true)
@@ -88,6 +99,28 @@ export function LastPlayed() {
                 <p className="text-xs text-muted-foreground tracking-wider mt-0.5">
                   {timeAgo(track.played_at)}
                 </p>
+                {/* Search links — open in Spotify / Apple Music */}
+                <div className="flex items-center gap-3 mt-1.5">
+                  
+                    href={spotifyUrl(track)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
+                    aria-label={`Search ${track.title} by ${track.artist} on Spotify`}
+                  >
+                    SPOTIFY
+                  </a>
+                  <span className="text-[10px] text-foreground/20">|</span>
+                  
+                    href={appleMusicUrl(track)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
+                    aria-label={`Search ${track.title} by ${track.artist} on Apple Music`}
+                  >
+                    APPLE MUSIC
+                  </a>
+                </div>
               </div>
             </div>
           ))}

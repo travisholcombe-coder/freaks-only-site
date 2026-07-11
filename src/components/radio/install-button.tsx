@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Smartphone, X, Share } from "lucide-react"
+import { Smartphone, X, Share, MoreVertical } from "lucide-react"
 
 // beforeinstallprompt isn't in the DOM lib types yet
 interface BeforeInstallPromptEvent extends Event {
@@ -137,7 +137,9 @@ export function InstallButton() {
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">1.</span>
                   <span>
-                    Open your browser&rsquo;s <strong>&#8942;</strong> menu.
+                    Open your browser&rsquo;s menu &mdash; the{" "}
+                    <MoreVertical className="inline w-4 h-4 mx-0.5 align-text-bottom" />{" "}
+                    (three dots), usually in the top-right corner.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">

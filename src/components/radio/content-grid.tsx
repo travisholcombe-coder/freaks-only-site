@@ -205,7 +205,7 @@ export function ContentGrid() {
 
           {/* Full day grid - hidden in the installed app (standalone) */}
           {!standalone && (
-            <div className="flex-1 overflow-y-auto max-h-[176px] space-y-0 text-sm">
+            <div className="flex-1 overflow-y-auto max-h-[130px] space-y-0 text-sm">
               {sortedSchedule.map((daySchedule, dayIndex) => (
                 <div
                   key={daySchedule.day}

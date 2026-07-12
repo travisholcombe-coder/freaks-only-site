@@ -67,7 +67,7 @@ export function PressSection() {
 
   return (
     <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)]">
-      <h2 className="text-lg font-bold tracking-wider mb-4">IN THE PRESS</h2>
+      <h2 className="text-lg font-bold tracking-wider mb-4">OUTSIDE TRANSMISSIONS</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {PRESS_ITEMS.map((item, i) => {
           const ytId = youtubeId(item.url)

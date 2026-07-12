@@ -9,7 +9,7 @@ interface Track {
   cover_art: string | null
 }
 
-const METADATA_URL = "https://freaksonly-metadata.travis-holcombe.workers.dev/"
+const METADATA_URL = "https://api.freaksonly.fm/"
 const LOGO_URL = "https://freaksonly.fm/freaks-only-logo.jpg"
 const SITE_URL = "https://freaksonly.fm"
 

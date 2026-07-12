@@ -10,7 +10,7 @@ interface HistoryTrack {
   played_at: number
 }
 
-const HISTORY_URL = "https://freaksonly-metadata.travis-holcombe.workers.dev/history"
+const HISTORY_URL = "https://api.freaksonly.fm/history"
 
 function timeAgo(timestamp: number): string {
   const mins = Math.floor((Date.now() - timestamp) / 60000)

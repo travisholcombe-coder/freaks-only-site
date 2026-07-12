@@ -181,11 +181,12 @@ export function InstallButton() {
                   <li className="flex items-start gap-2">
                     <span className="font-bold text-accent">2.</span>
                     <span>
-                      Open the browser menu &mdash; the{" "}
-                      <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share button
-                      on iPhone, or the{" "}
-                      <MoreVertical className="inline w-4 h-4 mx-0.5 align-text-bottom" /> menu
-                      on Android.
+                      On <strong>iPhone</strong>: tap the{" "}
+                      <MoreHorizontal className="inline w-4 h-4 mx-0.5 align-text-bottom" />{" "}
+                      (&bull;&bull;&bull;) next to the web address, then tap the{" "}
+                      <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share button.
+                      On <strong>Android</strong>: tap the{" "}
+                      <MoreVertical className="inline w-4 h-4 mx-0.5 align-text-bottom" /> menu.
                     </span>
                   </li>
                   <li className="flex items-start gap-2">

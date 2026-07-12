@@ -9,3 +9,10 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
+// Register the service worker (installability on Android/desktop + offline shell).
+// Failures are swallowed so this can never affect the site loading.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {})
+  })
+}

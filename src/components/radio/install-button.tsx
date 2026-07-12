@@ -23,6 +23,11 @@ function isIOS(): boolean {
   return /iphone|ipad|ipod/i.test(window.navigator.userAgent)
 }
 
+function isMobile(): boolean {
+  if (typeof window === "undefined") return false
+  return /android|iphone|ipad|ipod|mobile/i.test(window.navigator.userAgent)
+}
+
 export function InstallButton() {
   const [mounted, setMounted] = useState(false)
   const [standalone, setStandalone] = useState(false)
@@ -55,17 +60,16 @@ export function InstallButton() {
   // Nothing to show until mounted, or when already installed (display-mode: standalone)
   if (!mounted || standalone) return null
 
-  const ios = isIOS()
+  const platform = isIOS() ? "ios" : isMobile() ? "android" : "desktop"
 
   const handleClick = async () => {
     if (deferredPrompt) {
-      // Android / Chromium: real one-tap install prompt (needs the service worker)
+      // Android / desktop Chromium with a service worker: real one-tap install prompt
       await deferredPrompt.prompt()
       const choice = await deferredPrompt.userChoice
       if (choice.outcome === "accepted") setDeferredPrompt(null)
     } else {
-      // iOS Safari (no prompt API), or Android before the prompt is captured:
-      // show manual instructions
+      // iOS Safari, or any browser that can't auto-prompt: show manual instructions
       setShowModal(true)
     }
   }
@@ -107,7 +111,7 @@ export function InstallButton() {
               INSTALL FREAKS ONLY
             </h3>
 
-            {ios ? (
+            {platform === "ios" ? (
               <ol className="space-y-3 text-sm tracking-wide">
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">1.</span>
@@ -140,7 +144,7 @@ export function InstallButton() {
                   </span>
                 </li>
               </ol>
-            ) : (
+            ) : platform === "android" ? (
               <ol className="space-y-3 text-sm tracking-wide">
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">1.</span>
@@ -161,6 +165,38 @@ export function InstallButton() {
                   <span>Confirm, and it lands on your home screen.</span>
                 </li>
               </ol>
+            ) : (
+              <div className="space-y-3 text-sm tracking-wide">
+                <p>
+                  The FREAKS ONLY app installs on your <strong>mobile device</strong> &mdash;
+                  home-screen icon, lock-screen controls, and in-car display.
+                </p>
+                <ol className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-accent">1.</span>
+                    <span>
+                      On your mobile device, open <strong>freaksonly.fm</strong> in your browser.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-accent">2.</span>
+                    <span>
+                      Open the browser menu &mdash; the{" "}
+                      <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share button
+                      on iPhone, or the{" "}
+                      <MoreVertical className="inline w-4 h-4 mx-0.5 align-text-bottom" /> menu
+                      on Android.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-accent">3.</span>
+                    <span>
+                      Tap <strong>Add to Home Screen</strong> (iPhone) or{" "}
+                      <strong>Install app</strong> (Android).
+                    </span>
+                  </li>
+                </ol>
+              </div>
             )}
           </div>
         </div>

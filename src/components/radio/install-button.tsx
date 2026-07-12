@@ -112,26 +112,24 @@ export function InstallButton() {
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">1.</span>
                   <span>
-                    Make sure you&rsquo;re using <strong>Safari</strong> (this only works in
-                    Safari, not other browsers).
+                    Tap the{" "}
+                    <MoreHorizontal className="inline w-4 h-4 mx-0.5 align-text-bottom" />{" "}
+                    (&bull;&bull;&bull;) button next to the web address at the bottom of the
+                    screen.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">2.</span>
                   <span>
-                    Tap the{" "}
-                    <MoreHorizontal className="inline w-4 h-4 mx-0.5 align-text-bottom" />{" "}
-                    (&bull;&bull;&bull;) button next to the web address at the bottom of the
-                    screen &mdash; or the{" "}
-                    <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share icon
+                    In the menu that appears, tap the{" "}
+                    <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share button
                     (a square with an arrow pointing up).
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">3.</span>
                   <span>
-                    A menu slides up from the bottom. Scroll down and tap{" "}
-                    <strong>Add to Home Screen</strong>.
+                    Scroll down and tap <strong>Add to Home Screen</strong>.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">

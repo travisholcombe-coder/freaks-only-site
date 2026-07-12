@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Smartphone, X, Share, MoreVertical } from "lucide-react"
+import { Smartphone, X, Share, MoreVertical, MoreHorizontal } from "lucide-react"
 
 // beforeinstallprompt isn't in the DOM lib types yet
 interface BeforeInstallPromptEvent extends Event {
@@ -112,20 +112,33 @@ export function InstallButton() {
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">1.</span>
                   <span>
-                    Tap the <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share
-                    button in Safari&rsquo;s toolbar.
+                    Make sure you&rsquo;re using <strong>Safari</strong> (this only works in
+                    Safari, not other browsers).
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">2.</span>
                   <span>
-                    Scroll down and tap <strong>Add to Home Screen</strong>.
+                    Tap the{" "}
+                    <MoreHorizontal className="inline w-4 h-4 mx-0.5 align-text-bottom" />{" "}
+                    (&bull;&bull;&bull;) button next to the web address at the bottom of the
+                    screen &mdash; or the{" "}
+                    <Share className="inline w-4 h-4 mx-0.5 align-text-bottom" /> Share icon
+                    (a square with an arrow pointing up).
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-bold text-accent">3.</span>
                   <span>
-                    Tap <strong>Add</strong>. FREAKS ONLY lands on your home screen.
+                    A menu slides up from the bottom. Scroll down and tap{" "}
+                    <strong>Add to Home Screen</strong>.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold text-accent">4.</span>
+                  <span>
+                    Tap <strong>Add</strong> in the top-right corner. The FREAKS ONLY icon
+                    appears on your home screen &mdash; open it like any app.
                   </span>
                 </li>
               </ol>

@@ -16,15 +16,14 @@ function timeAgo(timestamp: number): string {
   const mins = Math.floor((Date.now() - timestamp) / 60000)
   if (mins < 1) return "JUST NOW"
   if (mins === 1) return "1 MIN AGO"
-  if (mins < 60) return `${mins} MINS AGO`
+  if (mins < 60) return mins + " MINS AGO"
   const hrs = Math.floor(mins / 60)
   if (hrs === 1) return "1 HR AGO"
-  return `${hrs} HRS AGO`
+  return hrs + " HRS AGO"
 }
 
-// Build search deep-links from the raw (original-case) artist + title.
-// These are plain search URLs — no API auth — and resolve to the native
-// app via universal links when Spotify / Apple Music is installed.
+// Plain search URLs (no API auth). Resolve to the native app via universal
+// links when Spotify / Apple Music is installed.
 function spotifyUrl(track: HistoryTrack): string {
   const q = encodeURIComponent(track.artist + " " + track.title)
   return "https://open.spotify.com/search/" + q
@@ -34,6 +33,9 @@ function appleMusicUrl(track: HistoryTrack): string {
   const q = encodeURIComponent(track.artist + " " + track.title)
   return "https://music.apple.com/us/search?term=" + q
 }
+
+const LINK_CLASS =
+  "text-[10px] font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
 
 export function LastPlayed() {
   const [history, setHistory] = useState<HistoryTrack[]>([])
@@ -67,61 +69,28 @@ export function LastPlayed() {
       {loading ? (
         <p className="text-xs text-muted-foreground tracking-widest">LOADING...</p>
       ) : history.length === 0 ? (
-        <p className="text-xs text-muted-foreground tracking-widest">NO HISTORY YET — CHECK BACK SOON</p>
+        <p className="text-xs text-muted-foreground tracking-widest">NO HISTORY YET - CHECK BACK SOON</p>
       ) : (
         <div className="overflow-y-auto max-h-[420px] pr-1 space-y-0">
           {history.map((track, i) => (
-            <div
-              key={i}
-              className={`flex items-center gap-4 py-3 ${
-                i !== history.length - 1 ? "border-b border-foreground/10" : ""
-              }`}
-            >
-              {/* Album Art */}
+            <div key={i} className={"flex items-center gap-4 py-3 " + (i !== history.length - 1 ? "border-b border-foreground/10" : "")}>
               <div className="w-12 h-12 flex-shrink-0 border-2 border-foreground overflow-hidden">
                 <img
                   src={track.cover_art || "/freaks-only-logo.jpg"}
                   alt={track.title}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg"
-                  }}
+                  onError={(e) => { (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg" }}
                 />
               </div>
 
-              {/* Track Info + Time */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold tracking-wider truncate">
-                  {track.title.toUpperCase()}
-                </p>
-                <p className="text-xs text-muted-foreground tracking-widest truncate">
-                  {track.artist.toUpperCase()}
-                </p>
-                {/* Time on its own line — always visible */}
-                <p className="text-xs text-muted-foreground tracking-wider mt-0.5">
-                  {timeAgo(track.played_at)}
-                </p>
-                {/* Search links — open in Spotify / Apple Music */}
+                <p className="text-sm font-bold tracking-wider truncate">{track.title.toUpperCase()}</p>
+                <p className="text-xs text-muted-foreground tracking-widest truncate">{track.artist.toUpperCase()}</p>
+                <p className="text-xs text-muted-foreground tracking-wider mt-0.5">{timeAgo(track.played_at)}</p>
                 <div className="flex items-center gap-3 mt-1.5">
-                  
-                    href={spotifyUrl(track)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
-                    aria-label={`Search ${track.title} by ${track.artist} on Spotify`}
-                  >
-                    SPOTIFY
-                  </a>
+                  <a href={spotifyUrl(track)} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>SPOTIFY</a>
                   <span className="text-[10px] text-foreground/20">|</span>
-                  
-                    href={appleMusicUrl(track)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-bold tracking-widest text-muted-foreground hover:text-accent transition-colors"
-                    aria-label={`Search ${track.title} by ${track.artist} on Apple Music`}
-                  >
-                    APPLE MUSIC
-                  </a>
+                  <a href={appleMusicUrl(track)} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>APPLE MUSIC</a>
                 </div>
               </div>
             </div>

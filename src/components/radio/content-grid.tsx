@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { SupportButton } from "./support-button"
 import { MerchButton } from "./merch-button"
 import { AlbumPlayer } from "./album-player"
@@ -62,8 +63,86 @@ function getSortedSchedule() {
   return [...schedule.slice(startIndex), ...schedule.slice(0, startIndex)]
 }
 
+// --- "On now" helpers (schedule is in PST; compute against LA time so a
+// listener anywhere sees the correct slot) ---
+function parseHour(s: string): number {
+  const m = s.trim().match(/^(\d+)(AM|PM)$/i)
+  if (!m) return 0
+  let h = parseInt(m[1], 10) % 12
+  if (m[2].toUpperCase() === "PM") h += 12
+  return h
+}
+
+interface Interval { start: number; end: number; show: string; time: string; startLabel: string }
+
+function buildIntervals(): Interval[] {
+  const out: Interval[] = []
+  for (const d of schedule) {
+    const di = dayKeys.indexOf(d.day)
+    for (const slot of d.slots) {
+      const [a, b] = slot.time.split("-")
+      const sh = parseHour(a)
+      const eh = parseHour(b)
+      let dur = (eh - sh + 24) % 24
+      if (dur === 0) dur = 24
+      const start = di * 24 + sh
+      out.push({ start, end: start + dur, show: slot.show, time: slot.time, startLabel: a.trim() })
+    }
+  }
+  return out
+}
+
+function laHourOfWeek(): number {
+  const la = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }))
+  return la.getDay() * 24 + la.getHours() + la.getMinutes() / 60
+}
+
+function getOnNow(): { current: Interval | null; next: Interval | null } {
+  const t = laHourOfWeek()
+  const iv = buildIntervals()
+  let current: Interval | null = null
+  for (const x of iv) {
+    if ((t >= x.start && t < x.end) || (t + 168 >= x.start && t + 168 < x.end)) {
+      current = x
+      break
+    }
+  }
+  let next: Interval | null = null
+  let best = Infinity
+  for (const x of iv) {
+    if (x === current) continue
+    // Skip a next slot that's the same show as what's on now (avoids a
+    // redundant "UP NEXT" when overnight blocks overlap).
+    if (current && x.show === current.show) continue
+    let d = (x.start - t) % 168
+    if (d <= 0) d += 168
+    if (d < best) {
+      best = d
+      next = x
+    }
+  }
+  return { current, next }
+}
+
+function isStandalone(): boolean {
+  if (typeof window === "undefined") return false
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (window.navigator as unknown as { standalone?: boolean }).standalone === true
+  )
+}
+
 export function ContentGrid() {
   const sortedSchedule = getSortedSchedule()
+  const [onNow, setOnNow] = useState<{ current: Interval | null; next: Interval | null }>(getOnNow)
+  const [standalone, setStandalone] = useState(false)
+
+  useEffect(() => {
+    setStandalone(isStandalone())
+    setOnNow(getOnNow())
+    const id = setInterval(() => setOnNow(getOnNow()), 60000)
+    return () => clearInterval(id)
+  }, [])
 
   return (
     <div className="flex flex-col gap-4 p-4 pt-2 pb-36">
@@ -106,29 +185,51 @@ export function ContentGrid() {
             <Zap className="w-5 h-5 text-accent" />
             <h2 className="text-lg font-bold tracking-wider">TRANSMISSION SCHEDULE</h2>
           </div>
-          <div className="flex-1 overflow-y-auto max-h-[280px] space-y-0 text-sm">
-            {sortedSchedule.map((daySchedule, dayIndex) => (
-              <div
-                key={daySchedule.day}
-                className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
-              >
-                <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider sticky top-0">
-                  {dayIndex === 0 ? `${daySchedule.day} — TODAY` : dayIndex === 1 ? `${daySchedule.day} — TOMORROW` : daySchedule.day}
-                </div>
-                {daySchedule.slots.map((slot, slotIndex) => (
-                  <div
-                    key={`${daySchedule.day}-${slotIndex}`}
-                    className={`flex justify-between items-center px-2 py-2 ${
-                      slotIndex !== daySchedule.slots.length - 1 ? "border-b border-foreground/10" : ""
-                    }`}
-                  >
-                    <span className="text-muted-foreground text-xs tracking-wider w-24">{slot.time}</span>
-                    <span className="text-foreground text-xs tracking-wider">{slot.show}</span>
-                  </div>
-                ))}
+
+          {/* ON NOW - pinned highlight, visible everywhere */}
+          {onNow.current && (
+            <div className="mb-4 border-2 border-accent bg-accent/10 p-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                <span className="text-xs font-bold tracking-widest text-accent">ON NOW</span>
               </div>
-            ))}
-          </div>
+              <p className="text-base font-bold tracking-wider mt-1">{onNow.current.show}</p>
+              <p className="text-xs text-muted-foreground tracking-wider">{onNow.current.time} PST</p>
+              {onNow.next && (
+                <p className="text-[10px] text-muted-foreground tracking-widest mt-2 pt-2 border-t border-foreground/20">
+                  UP NEXT: {onNow.next.show} / {onNow.next.startLabel}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Full day grid - hidden in the installed app (standalone) */}
+          {!standalone && (
+            <div className="flex-1 overflow-y-auto max-h-[280px] space-y-0 text-sm">
+              {sortedSchedule.map((daySchedule, dayIndex) => (
+                <div
+                  key={daySchedule.day}
+                  className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
+                >
+                  <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider sticky top-0">
+                    {dayIndex === 0 ? `${daySchedule.day} — TODAY` : dayIndex === 1 ? `${daySchedule.day} — TOMORROW` : daySchedule.day}
+                  </div>
+                  {daySchedule.slots.map((slot, slotIndex) => (
+                    <div
+                      key={`${daySchedule.day}-${slotIndex}`}
+                      className={`flex justify-between items-center px-2 py-2 ${
+                        slotIndex !== daySchedule.slots.length - 1 ? "border-b border-foreground/10" : ""
+                      }`}
+                    >
+                      <span className="text-muted-foreground text-xs tracking-wider w-24">{slot.time}</span>
+                      <span className="text-foreground text-xs tracking-wider">{slot.show}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="mt-4 pt-4 border-t-2 border-foreground/30">
             <p className="text-xs text-muted-foreground tracking-wider text-center">
               ALL TIMES PST // SCHEDULE SUBJECT TO CHANGE
@@ -161,7 +262,7 @@ export function ContentGrid() {
       {/* Donate Section */}
       <DonateSection />
 
-      {/* In The Press — media / interviews (website only; hidden in the app) */}
+      {/* In The Press / Outside Transmissions - media (website only; hidden in the app) */}
       <PressSection />
 
       {/* Social Links */}

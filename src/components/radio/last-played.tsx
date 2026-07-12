@@ -26,11 +26,13 @@ function timeAgo(timestamp: number): string {
 // These are plain search URLs — no API auth — and resolve to the native
 // app via universal links when Spotify / Apple Music is installed.
 function spotifyUrl(track: HistoryTrack): string {
-  return `https://open.spotify.com/search/${encodeURIComponent(`${track.artist} ${track.title}`)}`
+  const q = encodeURIComponent(track.artist + " " + track.title)
+  return "https://open.spotify.com/search/" + q
 }
 
 function appleMusicUrl(track: HistoryTrack): string {
-  return `https://music.apple.com/us/search?term=${encodeURIComponent(`${track.artist} ${track.title}`)}`
+  const q = encodeURIComponent(track.artist + " " + track.title)
+  return "https://music.apple.com/us/search?term=" + q
 }
 
 export function LastPlayed() {

@@ -8,6 +8,7 @@ import { SocialLinks } from "./social-links"
 import { DonateSection } from "./donate-section"
 import { LastPlayed } from "./last-played"
 import { InstallButton } from "./install-button"
+import { PressSection } from "./press-section"
 import { MinnitChat } from "../minnit-chat"
 import { Zap, MessageCircle } from "lucide-react"
 
@@ -159,6 +160,9 @@ export function ContentGrid() {
 
       {/* Donate Section */}
       <DonateSection />
+
+      {/* In The Press — media / interviews (website only; hidden in the app) */}
+      <PressSection />
 
       {/* Social Links */}
       <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)]">

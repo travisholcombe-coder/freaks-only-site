@@ -100,7 +100,7 @@ export function AudioPlayer() {
         }}
       />
 
-      <div className="flex items-center justify-between px-4 py-3 gap-4">
+      <div className="relative flex items-center justify-between px-4 py-3 gap-4 min-h-[72px] md:min-h-0">
         {/* Live Indicator */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -117,17 +117,20 @@ export function AudioPlayer() {
 
         {/* Player Controls */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={togglePlay}
-            className="border-4 border-foreground bg-accent p-3 shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100 active:shadow-none active:translate-x-1 active:translate-y-1"
-            aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            {isPlaying ? (
-              <Pause className="w-6 h-6 text-background" fill="currentColor" />
-            ) : (
-              <Play className="w-6 h-6 text-background" fill="currentColor" />
-            )}
-          </button>
+          {/* Play/pause: centered on mobile (siblings are hidden there), in-flow on desktop */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:static md:translate-x-0 md:translate-y-0">
+            <button
+              onClick={togglePlay}
+              className="border-4 border-foreground bg-accent p-4 md:p-3 shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100 active:shadow-none active:translate-x-1 active:translate-y-1"
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? (
+                <Pause className="w-7 h-7 md:w-6 md:h-6 text-background" fill="currentColor" />
+              ) : (
+                <Play className="w-7 h-7 md:w-6 md:h-6 text-background" fill="currentColor" />
+              )}
+            </button>
+          </div>
 
           <div className="hidden md:flex items-center gap-2">
             <button

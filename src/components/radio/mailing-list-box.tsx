@@ -3,16 +3,12 @@
 import { useState } from "react"
 import { Mail, Check } from "lucide-react"
 
-// MailerLite embedded-form subscribe endpoint (from the form's embed code).
-// We post to it directly (fire-and-forget) so we can use our own on-brand form
-// instead of MailerLite's default styling. MailerLite's confirmation email does
-// the real validation.
-const MAILERLITE_ENDPOINT =
-  "https://assets.mailerlite.com/jsonp/2505860/forms/192833612119279544/subscribe"
-
+// Posts to our own Cloudflare Pages Function (/subscribe), which forwards to the
+// MailerLite API server-side. Same-origin, so no CORS and real success/error.
 export function MailingListBox() {
   const [email, setEmail] = useState("")
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle")
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,25 +17,26 @@ export function MailingListBox() {
     if (!value) return
 
     setStatus("submitting")
-
-    const body = new URLSearchParams()
-    body.append("fields[email]", value)
-    body.append("ml-submit", "1")
-    body.append("anticsrf", "true")
+    setError("")
 
     try {
-      await fetch(MAILERLITE_ENDPOINT, {
+      const res = await fetch("/subscribe", {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: value }),
       })
+      if (res.ok) {
+        setStatus("success")
+        setEmail("")
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || "Something went wrong. Try again.")
+        setStatus("idle")
+      }
     } catch {
-      // no-cors returns an opaque response; nothing to read, treat as sent
+      setError("Network error. Try again.")
+      setStatus("idle")
     }
-
-    setStatus("success")
-    setEmail("")
   }
 
   return (
@@ -56,7 +53,7 @@ export function MailingListBox() {
             <span className="text-sm font-bold tracking-widest">YOU&rsquo;RE ON THE LIST</span>
           </div>
           <p className="text-xs text-muted-foreground tracking-wide">
-            Check your inbox to confirm.
+            Thanks for tuning in.
           </p>
         </div>
       ) : (
@@ -81,6 +78,9 @@ export function MailingListBox() {
             >
               {status === "submitting" ? "SUBMITTING..." : "SUBSCRIBE"}
             </button>
+            {error && (
+              <p className="text-[10px] text-accent tracking-wide">{error}</p>
+            )}
           </form>
         </>
       )}

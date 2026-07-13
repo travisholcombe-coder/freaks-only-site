@@ -3,6 +3,9 @@
 // the official API. The API token lives in the Pages env var MAILERLITE_TOKEN
 // (a secret) and is never exposed to the browser or committed to the repo.
 
+// FREAKS ONLY subscriber group - new signups are added straight into it.
+const GROUP_ID = "192833637770593979";
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -30,7 +33,7 @@ export async function onRequestPost(context) {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ email: email, groups: [GROUP_ID] }),
     });
 
     // 200/201 = created/updated. MailerLite upserts, so re-subscribing is fine.

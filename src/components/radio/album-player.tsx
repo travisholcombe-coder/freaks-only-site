@@ -67,8 +67,27 @@ export function AlbumPlayer() {
 
   useEffect(() => {
     fetchTrackData()
+    // Primary poll (works in the foreground).
     const interval = setInterval(fetchTrackData, 15000)
-    return () => clearInterval(interval)
+
+    // Refresh the moment the app returns to the foreground (catch-up after the
+    // screen was locked).
+    const onVisible = () => {
+      if (document.visibilityState === "visible") fetchTrackData()
+    }
+    document.addEventListener("visibilitychange", onVisible)
+
+    // Refresh driven by the audio pipeline (see audio-player.tsx). Media events
+    // keep firing during background playback better than a JS timer does, so
+    // this is what has a shot at updating the lock screen / car while locked.
+    const onSignal = () => fetchTrackData()
+    window.addEventListener("fofm:refresh-nowplaying", onSignal)
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener("visibilitychange", onVisible)
+      window.removeEventListener("fofm:refresh-nowplaying", onSignal)
+    }
   }, [])
 
   const handleShare = async () => {

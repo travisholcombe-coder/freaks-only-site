@@ -8,6 +8,7 @@ export function AudioPlayer() {
   const [isMuted, setIsMuted] = useState(false)
   const [volume, setVolume] = useState(0.8)
   const audioRef = useRef<HTMLAudioElement>(null)
+  const lastSignalRef = useRef(0)
 
   // Live radio: every "play" should reconnect to the LIVE edge, not resume a
   // stale buffer from a previous pause. Calling load() drops the old buffer and
@@ -97,6 +98,16 @@ export function AudioPlayer() {
         onPause={() => {
           setIsPlaying(false)
           if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused"
+        }}
+        onTimeUpdate={() => {
+          // Nudge the now-playing refresh off the audio pipeline (throttled to
+          // ~10s). This keeps firing during background playback better than a
+          // JS timer, which iOS suspends while the phone is locked.
+          const now = Date.now()
+          if (now - lastSignalRef.current > 10000) {
+            lastSignalRef.current = now
+            window.dispatchEvent(new Event("fofm:refresh-nowplaying"))
+          }
         }}
       />
 

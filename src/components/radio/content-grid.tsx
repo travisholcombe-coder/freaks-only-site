@@ -73,6 +73,13 @@ function parseHour(s: string): number {
   return h
 }
 
+function hourLabel(h: number): string {
+  const hh = ((Math.round(h) % 24) + 24) % 24
+  const period = hh < 12 ? "AM" : "PM"
+  const display = hh % 12 === 0 ? 12 : hh % 12
+  return `${display}${period}`
+}
+
 interface Interval {
   start: number
   end: number
@@ -121,30 +128,66 @@ function laWeekdayKey(): string {
   return dayKeys[la.getDay()]
 }
 
-function getOnNow(): { current: Interval | null; next: Interval | null } {
-  const t = laHourOfWeek()
-  const iv = buildIntervals()
-  let current: Interval | null = null
-  for (const x of iv) {
-    if ((t >= x.start && t < x.end) || (t + 168 >= x.start && t + 168 < x.end)) {
-      current = x
-      break
+// When the same show runs back-to-back across slots (e.g. Friday's overnight
+// FREAK PARADE flowing into Saturday's 8AM-8PM FREAK PARADE), treat it as one
+// continuous block so we don't claim it ends at 8AM when it really runs to 8PM.
+function buildMergedIntervals(): Interval[] {
+  const raw = buildIntervals().slice().sort((a, b) => a.start - b.start)
+  const merged: Interval[] = []
+  for (const x of raw) {
+    const last = merged[merged.length - 1]
+    if (last && last.show === x.show && Math.abs(last.end - x.start) < 0.001) {
+      last.end = x.end
+    } else {
+      merged.push({ ...x })
     }
   }
-  let next: Interval | null = null
+  return merged
+}
+
+function matches(t: number, x: Interval): boolean {
+  return (
+    (t >= x.start && t < x.end) ||
+    (t + 168 >= x.start && t + 168 < x.end) ||
+    (t - 168 >= x.start && t - 168 < x.end)
+  )
+}
+
+interface OnNowShow { show: string; time: string }
+interface OnNowNext { show: string; startLabel: string }
+
+function getOnNow(): { current: OnNowShow | null; next: OnNowNext | null } {
+  const t = laHourOfWeek()
+  const raw = buildIntervals()
+  const merged = buildMergedIntervals()
+
+  // Raw slot gives us the start time of the block we're currently inside.
+  const rawCurrent = raw.find((x) => matches(t, x)) || null
+  // Merged block gives us when the show actually ends.
+  const mergedCurrent = merged.find((x) => matches(t, x)) || null
+
+  const current: OnNowShow | null =
+    rawCurrent && mergedCurrent
+      ? {
+          show: mergedCurrent.show,
+          // Start of the slot we're in, through the end of the continuous run.
+          time: `${hourLabel(rawCurrent.start)}-${hourLabel(mergedCurrent.end)}`,
+        }
+      : null
+
+  let next: OnNowNext | null = null
   let best = Infinity
-  for (const x of iv) {
-    if (x === current) continue
-    // Skip a next slot that's the same show as what's on now (avoids a
-    // redundant "UP NEXT" when overnight blocks run together).
-    if (current && x.show === current.show) continue
+  for (const x of merged) {
+    if (x === mergedCurrent) continue
+    if (mergedCurrent && x.show === mergedCurrent.show) continue
     let d = (x.start - t) % 168
     if (d <= 0) d += 168
     if (d < best) {
       best = d
-      next = x
+      next = { show: x.show, startLabel: hourLabel(x.start) }
     }
   }
+
   return { current, next }
 }
 
@@ -174,10 +217,9 @@ export function ContentGrid() {
     return () => clearInterval(id)
   }, [])
 
-  // "Today" follows the broadcast day, not the calendar day: at 3AM Saturday
-  // you're still inside Friday's night, so the grid leads with FRI.
-  const anchorDay = onNow.current ? onNow.current.day : laWeekdayKey()
-  const sortedSchedule = sortScheduleFrom(anchorDay)
+  // The grid is a plain reference listing, rotated to start with the current
+  // day. "What's playing right now" is handled entirely by the ON NOW block.
+  const sortedSchedule = sortScheduleFrom(laWeekdayKey())
 
   return (
     <div className="flex flex-col gap-4 p-4 pt-2 pb-36">
@@ -247,7 +289,7 @@ export function ContentGrid() {
                   className={`${dayIndex !== sortedSchedule.length - 1 ? "border-b border-foreground/30" : ""}`}
                 >
                   <div className="bg-accent text-background px-2 py-1 font-bold text-sm tracking-wider sticky top-0">
-                    {dayIndex === 0 ? `${daySchedule.day} — TODAY` : dayIndex === 1 ? `${daySchedule.day} — TOMORROW` : daySchedule.day}
+                    {daySchedule.day}
                   </div>
                   {daySchedule.slots.map((slot, slotIndex) => (
                     <div

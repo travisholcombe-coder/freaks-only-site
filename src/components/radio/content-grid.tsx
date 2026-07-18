@@ -56,15 +56,15 @@ const schedule = [
 
 const dayKeys = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
 
-function getSortedSchedule() {
-  const todayIndex = new Date().getDay()
-  const todayKey = dayKeys[todayIndex]
-  const startIndex = schedule.findIndex((d) => d.day === todayKey)
-  return [...schedule.slice(startIndex), ...schedule.slice(0, startIndex)]
-}
+// --- Schedule helpers ---------------------------------------------------
+// The schedule is written the way a person thinks about it: a "12AM-8AM" line
+// listed under a day means THAT DAY'S NIGHT, which lands on the next calendar
+// morning (Friday's 12AM-8AM = Saturday 12AM-8AM). So when a slot starts
+// earlier in the clock than the slot before it, it has crossed midnight and
+// belongs to the following calendar day.
+// All times are PST, so "now" is computed in LA time regardless of the
+// listener's own timezone.
 
-// --- "On now" helpers (schedule is in PST; compute against LA time so a
-// listener anywhere sees the correct slot) ---
 function parseHour(s: string): number {
   const m = s.trim().match(/^(\d+)(AM|PM)$/i)
   if (!m) return 0
@@ -73,20 +73,39 @@ function parseHour(s: string): number {
   return h
 }
 
-interface Interval { start: number; end: number; show: string; time: string; startLabel: string }
+interface Interval {
+  start: number
+  end: number
+  show: string
+  time: string
+  startLabel: string
+  day: string
+}
 
 function buildIntervals(): Interval[] {
   const out: Interval[] = []
   for (const d of schedule) {
     const di = dayKeys.indexOf(d.day)
+    let dayOffset = 0
+    let prevStart = -1
     for (const slot of d.slots) {
       const [a, b] = slot.time.split("-")
       const sh = parseHour(a)
       const eh = parseHour(b)
+      // A slot that starts earlier than the previous one has crossed midnight.
+      if (prevStart >= 0 && sh < prevStart) dayOffset += 1
+      prevStart = sh
       let dur = (eh - sh + 24) % 24
       if (dur === 0) dur = 24
-      const start = di * 24 + sh
-      out.push({ start, end: start + dur, show: slot.show, time: slot.time, startLabel: a.trim() })
+      const start = (di + dayOffset) * 24 + sh
+      out.push({
+        start,
+        end: start + dur,
+        show: slot.show,
+        time: slot.time,
+        startLabel: a.trim(),
+        day: d.day,
+      })
     }
   }
   return out
@@ -95,6 +114,11 @@ function buildIntervals(): Interval[] {
 function laHourOfWeek(): number {
   const la = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }))
   return la.getDay() * 24 + la.getHours() + la.getMinutes() / 60
+}
+
+function laWeekdayKey(): string {
+  const la = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" }))
+  return dayKeys[la.getDay()]
 }
 
 function getOnNow(): { current: Interval | null; next: Interval | null } {
@@ -112,7 +136,7 @@ function getOnNow(): { current: Interval | null; next: Interval | null } {
   for (const x of iv) {
     if (x === current) continue
     // Skip a next slot that's the same show as what's on now (avoids a
-    // redundant "UP NEXT" when overnight blocks overlap).
+    // redundant "UP NEXT" when overnight blocks run together).
     if (current && x.show === current.show) continue
     let d = (x.start - t) % 168
     if (d <= 0) d += 168
@@ -124,6 +148,13 @@ function getOnNow(): { current: Interval | null; next: Interval | null } {
   return { current, next }
 }
 
+// Rotate the week so it starts on the given day.
+function sortScheduleFrom(dayKey: string) {
+  const startIndex = schedule.findIndex((d) => d.day === dayKey)
+  if (startIndex < 0) return schedule
+  return [...schedule.slice(startIndex), ...schedule.slice(0, startIndex)]
+}
+
 function isStandalone(): boolean {
   if (typeof window === "undefined") return false
   return (
@@ -133,7 +164,6 @@ function isStandalone(): boolean {
 }
 
 export function ContentGrid() {
-  const sortedSchedule = getSortedSchedule()
   const [onNow, setOnNow] = useState<{ current: Interval | null; next: Interval | null }>(getOnNow)
   const [standalone, setStandalone] = useState(false)
 
@@ -143,6 +173,11 @@ export function ContentGrid() {
     const id = setInterval(() => setOnNow(getOnNow()), 60000)
     return () => clearInterval(id)
   }, [])
+
+  // "Today" follows the broadcast day, not the calendar day: at 3AM Saturday
+  // you're still inside Friday's night, so the grid leads with FRI.
+  const anchorDay = onNow.current ? onNow.current.day : laWeekdayKey()
+  const sortedSchedule = sortScheduleFrom(anchorDay)
 
   return (
     <div className="flex flex-col gap-4 p-4 pt-2 pb-36">

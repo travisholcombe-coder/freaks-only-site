@@ -49,7 +49,9 @@ export function AlbumPlayer() {
 
   const fetchTrackData = async () => {
     try {
-      const res = await fetch(METADATA_URL)
+      // no-store so the live poll never serves a stale browser-cached copy.
+      // The Worker's edge/in-isolate cache still shields Live365 from load.
+      const res = await fetch(METADATA_URL, { cache: "no-store" })
       const data = await res.json()
       const next: Track = {
         title: data.title ? data.title.toUpperCase() : "WAITING FOR SIGNAL",
@@ -122,6 +124,7 @@ export function AlbumPlayer() {
       {/* Album Art */}
       <div className="border-4 border-foreground bg-background w-full aspect-square relative overflow-hidden">
         <img
+          key={currentTrack.cover_art || "logo"}
           src={currentTrack.cover_art || "/freaks-only-logo.jpg"}
           alt={currentTrack.cover_art ? `${currentTrack.title} by ${currentTrack.artist}` : "FREAKS ONLY FM"}
           className="w-full h-full object-cover"

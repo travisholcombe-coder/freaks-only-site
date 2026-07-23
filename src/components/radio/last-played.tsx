@@ -28,7 +28,7 @@ export function LastPlayed() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(HISTORY_URL)
+      const res = await fetch(HISTORY_URL, { cache: "no-store" })
       const data = await res.json()
       setHistory(data)
     } catch (err) {
@@ -58,9 +58,10 @@ export function LastPlayed() {
       ) : (
         <div className="overflow-y-auto max-h-[360px] pr-1 space-y-0">
           {history.map((track, i) => (
-            <div key={i} className={"flex items-center gap-4 py-3 " + (i !== history.length - 1 ? "border-b border-foreground/10" : "")}>
+            <div key={track.played_at} className={"flex items-center gap-4 py-3 " + (i !== history.length - 1 ? "border-b border-foreground/10" : "")}>
               <div className="w-12 h-12 flex-shrink-0 border-2 border-foreground overflow-hidden">
                 <img
+                  key={track.cover_art || "logo"}
                   src={track.cover_art || "/freaks-only-logo.jpg"}
                   alt={track.title}
                   className="w-full h-full object-cover"

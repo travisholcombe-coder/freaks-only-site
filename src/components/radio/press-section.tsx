@@ -25,8 +25,8 @@ const LOGO_URL = "/freaks-only-logo.jpg"
 //               good for square album art in the 16:9 thumbnail box)
 const PRESS_ITEMS: PressItem[] = [
   {
-    title: "FREAKS ONLY ESKIMO SELECTS",
-    source: "Eskimo Recordings",
+    title: "FREAKS ONLY Eskimo Selects (2014-2026)",
+    source: "Bandcamp",
     url: "https://eskimorecordings.bandcamp.com/album/freaks-only-eskimo-selects-2014-2026",
     image: "https://f4.bcbits.com/img/a3790661534_5.jpg",
     date: "August 2026",

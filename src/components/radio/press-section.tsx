@@ -9,14 +9,30 @@ interface PressItem {
   url: string
   image?: string
   date?: string
+  cta?: string
+  imageFit?: "cover" | "contain"
 }
 
 const LOGO_URL = "/freaks-only-logo.jpg"
 
-// Add new interviews / videos here. A YouTube link renders an inline player
-// automatically; anything else renders a click-out thumbnail card. For a
+// Add new interviews / videos / releases here. A YouTube link renders an inline
+// player automatically; anything else renders a click-out thumbnail card. For a
 // YouTube item you can leave "image" out.
+//
+// Optional per-item knobs on click-out cards:
+//   cta      -> button label, defaults to "READ" (use "LISTEN", "WATCH", etc.)
+//   imageFit -> "cover" (default, fills + crops) or "contain" (fits whole image,
+//               good for square album art in the 16:9 thumbnail box)
 const PRESS_ITEMS: PressItem[] = [
+  {
+    title: "FREAKS ONLY ESKIMO SELECTS",
+    source: "Eskimo Recordings",
+    url: "https://eskimorecordings.bandcamp.com/album/freaks-only-eskimo-selects-2014-2026",
+    image: "https://f4.bcbits.com/img/a3790661534_5.jpg",
+    date: "August 2026",
+    cta: "LISTEN",
+    imageFit: "contain",
+  },
   {
     title: "In Conversation: Travis Holcombe presents Freaks Only FM",
     source: "In Sheep's Clothing",
@@ -100,7 +116,7 @@ export function PressSection() {
             )
           }
 
-          // Click-out thumbnail card (articles, podcasts, etc.)
+          // Click-out thumbnail card (articles, releases, podcasts, etc.)
           return (
             <a
               key={i}
@@ -113,7 +129,9 @@ export function PressSection() {
                 <img
                   src={item.image || LOGO_URL}
                   alt={item.title}
-                  className="w-full h-full object-cover"
+                  className={
+                    "w-full h-full " + (item.imageFit === "contain" ? "object-contain" : "object-cover")
+                  }
                   onError={(e) => { (e.target as HTMLImageElement).src = LOGO_URL }}
                 />
               </div>
@@ -125,7 +143,7 @@ export function PressSection() {
                 <p className="text-sm font-bold tracking-wide leading-snug">{item.title}</p>
                 <div className="mt-2 flex items-center gap-1 text-[10px] tracking-widest text-muted-foreground group-hover:text-accent">
                   <ExternalLink className="w-3 h-3" />
-                  <span>READ</span>
+                  <span>{item.cta || "READ"}</span>
                 </div>
               </div>
             </a>

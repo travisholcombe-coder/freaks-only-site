@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { Clock } from "lucide-react"
 
@@ -10,16 +9,16 @@ interface HistoryTrack {
   played_at: number
 }
 
-const HISTORY_URL = "https://api.freaksonly.fm/history"
+const HISTORY_URL = "https://freaksonly-metadata.travis-holcombe.workers.dev/history"
 
 function timeAgo(timestamp: number): string {
   const mins = Math.floor((Date.now() - timestamp) / 60000)
   if (mins < 1) return "JUST NOW"
   if (mins === 1) return "1 MIN AGO"
-  if (mins < 60) return mins + " MINS AGO"
+  if (mins < 60) return `${mins} MINS AGO`
   const hrs = Math.floor(mins / 60)
   if (hrs === 1) return "1 HR AGO"
-  return hrs + " HRS AGO"
+  return `${hrs} HRS AGO`
 }
 
 export function LastPlayed() {
@@ -28,7 +27,7 @@ export function LastPlayed() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(HISTORY_URL, { cache: "no-store" })
+      const res = await fetch(HISTORY_URL)
       const data = await res.json()
       setHistory(data)
     } catch (err) {
@@ -50,33 +49,63 @@ export function LastPlayed() {
         <Clock className="w-5 h-5 text-accent" />
         <h2 className="text-lg font-bold tracking-wider">LAST PLAYED</h2>
       </div>
-
       {loading ? (
         <p className="text-xs text-muted-foreground tracking-widest">LOADING...</p>
       ) : history.length === 0 ? (
-        <p className="text-xs text-muted-foreground tracking-widest">NO HISTORY YET - CHECK BACK SOON</p>
+        <p className="text-xs text-muted-foreground tracking-widest">NO HISTORY YET — CHECK BACK SOON</p>
       ) : (
-        <div className="overflow-y-auto max-h-[360px] pr-1 space-y-0">
-          {history.map((track, i) => (
-            <div key={track.played_at} className={"flex items-center gap-4 py-3 " + (i !== history.length - 1 ? "border-b border-foreground/10" : "")}>
-              <div className="w-12 h-12 flex-shrink-0 border-2 border-foreground overflow-hidden">
-                <img
-                  key={track.cover_art || "logo"}
-                  src={track.cover_art || "/freaks-only-logo.jpg"}
-                  alt={track.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg" }}
-                />
+        <>
+          <div className="space-y-0">
+            {history.map((track, i) => (
+              <div
+                key={i}
+                className={`flex items-center gap-4 py-3 ${
+                  i !== history.length - 1 ? "border-b border-foreground/10" : ""
+                }`}
+              >
+                {/* Album Art */}
+                <div className="w-12 h-12 flex-shrink-0 border-2 border-foreground overflow-hidden">
+                  <img
+                    src={track.cover_art || "/freaks-only-logo.jpg"}
+                    alt={track.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/freaks-only-logo.jpg"
+                    }}
+                  />
+                </div>
+                {/* Track Info + Time */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold tracking-wider truncate">
+                    {track.title.toUpperCase()}
+                  </p>
+                  <p className="text-xs text-muted-foreground tracking-widest truncate">
+                    {track.artist.toUpperCase()}
+                  </p>
+                  {/* Time on its own line — always visible */}
+                  <p className="text-xs text-muted-foreground tracking-wider mt-0.5">
+                    {timeAgo(track.played_at)}
+                  </p>
+                </div>
               </div>
+            ))}
+          </div>
 
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold tracking-wider truncate">{track.title.toUpperCase()}</p>
-                <p className="text-xs text-muted-foreground tracking-widest truncate">{track.artist.toUpperCase()}</p>
-                <p className="text-xs text-muted-foreground tracking-wider mt-0.5">{timeAgo(track.played_at)}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+          {/* Setlist archive link — desktop web only, hidden on mobile and in PWA via CSS */}
+          <a
+            href="https://d382q4x0yf7o85.cloudfront.net/index.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="setlist-archive-link mt-4 pt-3 border-t border-foreground/20 flex flex-col items-center gap-0.5 text-center hover:text-accent transition-colors group"
+          >
+            <span className="text-xs font-bold tracking-widest group-hover:text-accent">
+              FULL SETLIST ARCHIVE ↗
+            </span>
+            <span className="text-[10px] text-muted-foreground tracking-widest">
+              BUILT BY @SPERRYFREAK01
+            </span>
+          </a>
+        </>
       )}
     </div>
   )

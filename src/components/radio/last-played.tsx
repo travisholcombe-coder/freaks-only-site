@@ -55,7 +55,7 @@ export function LastPlayed() {
         <p className="text-xs text-muted-foreground tracking-widest">NO HISTORY YET — CHECK BACK SOON</p>
       ) : (
         <>
-          <div className="space-y-0">
+          <div className="max-h-[380px] overflow-y-auto space-y-0 pr-1">
             {history.map((track, i) => (
               <div
                 key={i}

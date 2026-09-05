@@ -44,3 +44,16 @@
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+/* Hide the setlist archive link on mobile viewports */
+@media (max-width: 768px) {
+  .setlist-archive-link {
+    display: none;
+  }
+}
+
+/* Also hide when running as installed PWA (any viewport size) */
+@media (display-mode: standalone) {
+  .setlist-archive-link {
+    display: none;
+  }
+}

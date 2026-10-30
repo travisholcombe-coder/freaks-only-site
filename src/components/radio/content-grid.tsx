@@ -45,8 +45,8 @@ const schedule = [
     { time: "12AM-8AM", show: "FREAK PARADE" },
   ]},
 { day: "SAT", slots: [
-  { time: "8AM-8PM", show: "FREAK PARADE" },
-  { time: "8PM-4AM", show: "AUX OUT" },
+  { time: "8AM-12PM", show: "FREAK PARADE" },
+  { time: "12PM-4AM", show: "🎃 DEAD AIR: HALLOWEEN SPECIAL" },
 ]},
 { day: "SUN", slots: [
   { time: "4AM-8PM", show: "THE PERCOLATOR" },

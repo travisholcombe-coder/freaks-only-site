@@ -90,7 +90,7 @@ export function PressSection() {
             return (
               <div
                 key={i}
-                className="border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] min-w-[300px] sm:min-w-[350px] flex-shrink-0"
+                className="border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] w-[300px] sm:w-[350px] flex-shrink-0"
               >
                 <div className="aspect-video w-full border-b-4 border-foreground bg-black">
                   <iframe
@@ -119,7 +119,7 @@ export function PressSection() {
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100 min-w-[300px] sm:min-w-[350px] flex-shrink-0"
+              className="group border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100 w-[300px] sm:w-[350px] flex-shrink-0"
             >
               <div className="aspect-video w-full overflow-hidden border-b-4 border-foreground bg-secondary">
                 <img

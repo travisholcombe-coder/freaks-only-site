@@ -15,17 +15,9 @@ interface PressItem {
 
 const LOGO_URL = "/freaks-only-logo.jpg"
 
-// Add new interviews / videos / releases here. A YouTube link renders an inline
-// player automatically; anything else renders a click-out thumbnail card. For a
-// YouTube item you can leave "image" out.
-//
-// Optional per-item knobs on click-out cards:
-//   cta      -> button label, defaults to "READ" (use "LISTEN", "WATCH", etc.)
-//   imageFit -> "cover" (default, fills + crops) or "contain" (fits whole image,
-//               good for square album art in the 16:9 thumbnail box)
 const PRESS_ITEMS: PressItem[] = [
   {
-    title: "How Travis Holcombe Started Over and Built FREAKS ONLY FM",
+    title: "Travis Holcombe Is Still Championing Music Discovery Beyond the Algorithm",
     source: "Billboard",
     url: "https://www.billboard.com/music/music-news/travis-holcombe-freaks-only-radio-kcrw-dj-music-discovery-1236373511/",
     image: "https://www.billboard.com/wp-content/uploads/2026/11/Billboard_Travis-Holcombe_2026.jpeg?w=942&h=628&crop=1",
@@ -85,22 +77,20 @@ export function PressSection() {
     setStandalone(isStandalone())
   }, [])
 
-  // Website only: render nothing in the installed app, or if there are no items.
   if (!mounted || standalone || PRESS_ITEMS.length === 0) return null
 
   return (
     <div className="border-4 border-foreground bg-secondary p-4 shadow-[8px_8px_0px_0px_rgba(250,250,250,1)]">
       <h2 className="text-lg font-bold tracking-wider mb-4">OUTSIDE TRANSMISSIONS</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex gap-4 overflow-x-auto pb-2">
         {PRESS_ITEMS.map((item, i) => {
           const ytId = youtubeId(item.url)
 
           if (ytId) {
-            // Inline YouTube player
             return (
               <div
                 key={i}
-                className="border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)]"
+                className="border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] min-w-[300px] sm:min-w-[350px] flex-shrink-0"
               >
                 <div className="aspect-video w-full border-b-4 border-foreground bg-black">
                   <iframe
@@ -123,14 +113,13 @@ export function PressSection() {
             )
           }
 
-          // Click-out thumbnail card (articles, releases, podcasts, etc.)
           return (
             <a
               key={i}
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100"
+              className="group border-4 border-foreground bg-background overflow-hidden shadow-[4px_4px_0px_0px_rgba(250,250,250,1)] hover:shadow-[2px_2px_0px_0px_rgba(250,250,250,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-100 min-w-[300px] sm:min-w-[350px] flex-shrink-0"
             >
               <div className="aspect-video w-full overflow-hidden border-b-4 border-foreground bg-secondary">
                 <img

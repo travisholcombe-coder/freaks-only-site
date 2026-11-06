@@ -25,6 +25,13 @@ const LOGO_URL = "/freaks-only-logo.jpg"
 //               good for square album art in the 16:9 thumbnail box)
 const PRESS_ITEMS: PressItem[] = [
   {
+    title: "How Travis Holcombe Started Over and Built FREAKS ONLY FM",
+    source: "Billboard",
+    url: "https://www.billboard.com/music/music-news/travis-holcombe-freaks-only-radio-kcrw-dj-music-discovery-1236373511/",
+    image: "https://www.billboard.com/wp-content/uploads/2026/11/Billboard_Travis-Holcombe_2026.jpeg?w=942&h=628&crop=1",
+    date: "November 2026",
+  },
+  {
     title: "FREAKS ONLY Eskimo Selects (2014-2026)",
     source: "Bandcamp",
     url: "https://eskimorecordings.bandcamp.com/album/freaks-only-eskimo-selects-2014-2026",
